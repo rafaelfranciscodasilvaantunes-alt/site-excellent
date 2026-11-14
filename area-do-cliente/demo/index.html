@@ -1,0 +1,1054 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Esboço v2 · [Nome do produto] · plataforma de gestão de obras</title>
+<script>
+/* =====================================================================
+   CONFIGURAÇÃO ÚNICA DO ESBOÇO v2
+   Todos os dados da demonstração ficam aqui. Valores, datas, fornecedores
+   e ocorrências são FICTÍCIOS e ilustrativos. Para usar números reais,
+   troque só este objeto: o resto do arquivo lê daqui.
+   ===================================================================== */
+const CONFIG = {
+  produto: { nome: '[Nome do produto]', selo: 'nome em definição' },
+  demo: 'Demonstração · valores ilustrativos',
+  construtora: { nome: 'Excellent Soluções', sigla: 'ES', taxaAdm: 0.12, gestor: 'Carlos (gestor)' },
+  hoje: '12/11/2026',
+  fases: ['Estudo', 'Projeto', 'Aprovações', 'Compatibilização', 'Compras', 'Execução', 'Entrega'],
+
+  /* ---------- clientes (um login pode ter várias obras) ---------- */
+  clientes: [
+    { id: 'marina', nome: 'Marina Duarte', curto: 'Marina', empresa: 'Portalux Esquadrias', obras: ['rp'] },
+    { id: 'lucas', nome: 'Lucas Almeida', curto: 'Lucas', empresa: 'Colégio Horizonte · Colégio Aurora', obras: ['pp', 'aurora'] },
+    { id: 'bruno', nome: 'Bruno Carvalho', curto: 'Bruno', empresa: 'Atlas Engenharia', obras: ['atlas'] }
+  ],
+
+  /* ---------- obras ---------- */
+  obras: {
+    rp: {
+      nome: 'Galpão para locação', cliente: 'Portalux Esquadrias', cidade: 'Timbó/SC', area: 2000, tipo: 'Galpão · comercial e logística',
+      resp: 'marina', eng: 'Eng. Marcos', vitrine: true, orcado: 5000000,
+      etapas: ['Projetos e aprovações', 'Fundação', 'Estrutura pré-moldada', 'Cobertura e fechamento', 'Piso industrial', 'Instalações', 'Docas, esquadrias e acabamentos'],
+      orcEtapa: [250000, 600000, 1300000, 1000000, 700000, 650000, 500000],
+      /* jornada: o seletor "Ver a obra em" troca o estado inteiro da visão da Marina */
+      jornada: [
+        { fase: 'Projeto', iFase: 1, quando: 'como estaria em 15/12/2026',
+          frase: '✓ Projetos no prazo · estrutural 80%', sub: 'Os projetos estão sendo feitos. Nada é comprado antes da compatibilização.',
+          entregas: [['Arquitetônico', 100], ['Estrutural (pré-moldado)', 80], ['Terraplenagem e drenagem', 70], ['Elétrico e SPDA', 60], ['Hidrossanitário', 55], ['Prevenção de incêndio (PPCI)', 45]],
+          fin: [[250000, 120000, 55], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]], fis: null,
+          book: [30, 0, 25, 5, 0, 0, 0, 10, 0, 0],
+          med: [['RM-01', 'Novembro · projetos', 120000, 1]] },
+        { fase: 'Aprovações', iFase: 2, quando: 'como estaria em 15/02/2027',
+          frase: '⏳ Aguardando o alvará da prefeitura · previsão 05/03/2027', sub: 'O projeto de incêndio já foi aprovado pelos Bombeiros. O alvará é o próximo passo.',
+          aprov: [['Consulta de viabilidade · Prefeitura de Timbó', 'ok', 'aprovada em 12/01'], ['Projeto de incêndio (PPCI) · Corpo de Bombeiros', 'ok', 'aprovado em 02/02'], ['Alvará de construção · Prefeitura de Timbó', 'now', 'protocolado em 20/01 · previsão 05/03'], ['Licença ambiental', 'skip', 'dispensada para este uso (exemplo)'], ['ARTs de projeto', 'ok', '6 de 6 emitidas']],
+          fin: [[250000, 200000, 85], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]], fis: null,
+          book: [40, 5, 40, 60, 5, 5, 0, 20, 0, 0],
+          med: [['RM-01', 'Novembro · projetos', 120000, 3], ['RM-02', 'Janeiro · projetos e taxas', 80000, 1]] },
+        { fase: 'Compatibilização', iFase: 3, quando: 'como estaria em 20/03/2027',
+          frase: '✓ Compatibilização 85% · 3 ajustes em solução', sub: 'As compras ficam seguras até os projetos conversarem entre si. Assim não se compra errado nem em dobro.',
+          compat: { achadas: 18, resolvidas: 15, abertas: ['Calha × viga de borda no eixo C', 'Eletrocalha × tubulação de sprinkler na doca 2', 'Reforço da laje técnica para as condensadoras'] },
+          fin: [[250000, 235000, 95], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]], fis: null,
+          book: [50, 5, 60, 70, 10, 10, 0, 30, 0, 0],
+          med: [['RM-02', 'Janeiro · projetos e taxas', 80000, 3], ['RM-03', 'Março · compatibilização', 35000, 0]] },
+        { fase: 'Compras', iFase: 4, quando: 'como estaria em 05/04/2027',
+          frase: '✋ 1 compra para você aprovar: estrutura pré-moldada', sub: 'A equipe cotou 3 fabricantes e recomenda o de melhor custo-benefício. A decisão é sua.',
+          fin: [[250000, 250000, 100], [590000, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]], fis: null,
+          book: [60, 10, 65, 75, 15, 25, 5, 40, 0, 0],
+          med: [['RM-03', 'Março · compatibilização', 35000, 3]] },
+        { fase: 'Execução', iFase: 5, quando: 'como estaria em 20/07/2027',
+          frase: '✓ No prazo · entrega prevista 30/10/2027', sub: 'O avanço sai dos apontamentos diários das equipes no app de campo.',
+          fin: [[250000, 250000, 100], [610000, 610000, 100], [1340000, 1100000, 85], [980000, 400000, 40], [690000, 0, 0], [420000, 80000, 10], [120000, 0, 0]],
+          fis: { previsto: 49 },
+          book: [70, 50, 70, 85, 55, 60, 30, 70, 10, 0],
+          med: [['RM-05', 'Junho', 900000, 3], ['RM-06', 'Julho (parcial)', 700000, 1]] },
+        { fase: 'Entrega', iFase: 6, quando: 'como estaria em 25/10/2027',
+          frase: '🏁 Vistoria de entrega em 28/10 · book 94%', sub: 'Faltam 4 pendências de 27. O book de obra está quase pronto.',
+          entrega: [['Vistoria final com o cliente', 'now', 'marcada para 28/10 às 9h'], ['Pendências da vistoria prévia', 'now', '23 de 27 resolvidas'], ['Manual de uso e manutenção', 'now', 'em revisão'], ['Termo de entrega', 'todo', 'assinatura na vistoria'], ['Entrega das chaves e do book', 'todo', 'após o termo']],
+          fin: [[250000, 250000, 100], [610000, 610000, 100], [1340000, 1340000, 100], [990000, 990000, 100], [705000, 705000, 100], [640000, 640000, 100], [495000, 480000, 98]],
+          fis: { previsto: 100 },
+          book: [100, 100, 95, 100, 100, 100, 90, 100, 85, 70],
+          med: [['RM-08', 'Setembro', 650000, 3], ['RM-09', 'Outubro', 310000, 1]] }
+      ]
+    },
+    pp: {
+      nome: 'Escola · novo prédio', cliente: 'Colégio Horizonte', cidade: 'Penha/SC', area: 5000, tipo: 'Escola · educacional',
+      resp: 'lucas', eng: 'Eng. Marcos', orcado: 15000000, iFase: 5, entregaPrev: '15/07/2027',
+      etapas: ['Serviços preliminares e fundação', 'Estrutura', 'Alvenaria e vedações', 'Cobertura', 'Instalações elétricas e dados', 'Hidráulica e incêndio', 'Pisos e revestimentos', 'Esquadrias e acabamentos'],
+      orcEtapa: [1800000, 4200000, 1500000, 1300000, 1600000, 1200000, 1700000, 1700000],
+      fin: [[1820000, 1820000, 100], [4300000, 4100000, 95], [1400000, 900000, 65], [1300000, 1100000, 90], [900000, 500000, 35], [700000, 400000, 35], [500000, 200000, 15], [300000, 0, 0]],
+      prevEtapa: [100, 100, 70, 95, 40, 40, 22, 5],
+      atrasoDias: 4, curva: { inicio: 'mar/26', meses: 17, hoje: 8 },
+      med: [['RM-07', 'Setembro', 1100000, 3], ['RM-08', 'Outubro', 1200000, 1], ['RM-09', 'Novembro (parcial)', 600000, 0]],
+      book: [60, 55, 50, 80, 50, 60, 20, 70, 0, 0]
+    },
+    aurora: {
+      nome: 'Escola · novo prédio', cliente: 'Colégio Aurora', cidade: 'Blumenau/SC', area: 5000, tipo: 'Escola · educacional',
+      resp: 'lucas', eng: 'Eng. Ana', orcado: 15000000, iFase: 5, entregaPrev: '27/07/2027',
+      etapas: ['Serviços preliminares e fundação', 'Estrutura', 'Alvenaria e vedações', 'Cobertura', 'Instalações elétricas e dados', 'Hidráulica e incêndio', 'Pisos e revestimentos', 'Esquadrias e acabamentos'],
+      orcEtapa: [1800000, 4200000, 1500000, 1300000, 1600000, 1200000, 1700000, 1700000],
+      fin: [[1800000, 1800000, 100], [4200000, 3000000, 70], [600000, 200000, 10], [0, 0, 0], [100000, 50000, 0], [100000, 50000, 0], [0, 0, 0], [0, 0, 0]],
+      prevEtapa: [100, 90, 40, 20, 10, 10, 0, 0],
+      atrasoDias: 12,
+      pausa: {
+        motivo: 'Aguardando a aprovação do projeto de incêndio (PPCI) revisado no Corpo de Bombeiros',
+        desde: '20/10/2026', desdeData: [2026, 9, 20, 8, 0], dep: 'Órgão público',
+        bastidores: [['✓', '22/10 · Projeto de incêndio revisado e protocolado nos Bombeiros'], ['✓', '05/11 · Vistoria técnica dos Bombeiros feita no local'], ['⏳', '18/11 · Resposta prevista dos Bombeiros'], ['✓', 'Enquanto isso: compras da cobertura cotadas e prontas para liberar'], ['✋', 'Decisão sua: autorizar a taxa de reanálise (veja em Decisões)']],
+        retomada: '01/12/2026', impacto: 'A entrega passa de 15/07 para 27/07/2027 (+12 dias). Cada dia a mais sem resposta soma 1 dia.'
+      },
+      med: [['RM-05', 'Setembro', 400000, 3], ['RM-06', 'Outubro', 150000, 2]],
+      book: [50, 35, 40, 45, 30, 40, 10, 50, 0, 0]
+    },
+    atlas: {
+      nome: 'Reforma de escritório', cliente: 'Atlas Engenharia', cidade: 'Blumenau/SC', area: 50, tipo: 'Reforma · corporativo',
+      resp: 'bruno', eng: 'Eng. Ana', orcado: 150000, iFase: 6, entregaPrev: '19/11/2026',
+      frase: '🏁 Em entrega · vistoria em 19/11 · book 92%',
+      etapas: ['Demolição e preparação', 'Drywall e forro', 'Elétrica e dados', 'Ar-condicionado', 'Piso vinílico', 'Pintura e acabamentos', 'Mobiliário fixo'],
+      orcEtapa: [12000, 30000, 25000, 28000, 20000, 15000, 20000],
+      fin: [[12000, 12000, 100], [31500, 31500, 100], [24000, 24000, 100], [28000, 28000, 100], [19000, 19000, 100], [16500, 15000, 100], [20000, 18000, 90]],
+      prevEtapa: [100, 100, 100, 100, 100, 100, 95],
+      atrasoDias: 0,
+      med: [['RM-01', 'Outubro', 90000, 3], ['RM-02', 'Novembro', 54000, 2]],
+      book: [100, 100, 100, 100, 100, 100, 90, 100, 80, 50],
+      bookFalta: ['Certificado de garantia do ar-condicionado (Épsilon Climatização)', 'Manual de uso: revisão final do capítulo do ar-condicionado', 'Termo de entrega: assinatura de Bruno Carvalho na vistoria de 19/11']
+    }
+  },
+
+  /* ---------- decisões do cliente (com alçadas) ---------- */
+  alcadas: {
+    rp: 'Marina aprova até R$ 200 mil. Acima disso, sobe para a Diretoria da Portalux Esquadrias.',
+    pp: 'Lucas aprova até R$ 300 mil. Acima disso, sobe para a Mantenedora.',
+    aurora: 'Lucas aprova até R$ 300 mil. Acima disso, sobe para a Mantenedora.',
+    atlas: 'Bruno Carvalho aprova qualquer valor desta obra.'
+  },
+  decisoes: [
+    { id: 'rp-lay', obra: 'rp', fase: 'Projeto', t: 'Aprovar o layout: 4 docas e pé-direito de 12 m', d: 'Sem custo extra · define o projeto estrutural', due: '18/12', ch: [['Eng. Marcos (construtora) · preparou', 'done'], ['Marina (Portalux Esquadrias)', 'now']] },
+    { id: 'rp-cond', obra: 'rp', fase: 'Compatibilização', t: 'Posição das condensadoras: sobre a laje técnica (recomendado)', d: 'Evita reforço na cobertura · +0 dia', due: '24/03', ch: [['Eng. Marcos (construtora) · preparou', 'done'], ['Marina (Portalux Esquadrias)', 'now']] },
+    { id: 'rp-ad1', obra: 'rp', fase: 'Execução', t: 'Aditivo 01 · 2 niveladoras de doca a mais', d: '+ R$ 90.000 · +0 dia no prazo', due: '25/07', ch: [['Eng. Marcos (construtora) · preparou', 'done'], ['Marina (Portalux Esquadrias)', 'now']] },
+    { id: 'rp-vis', obra: 'rp', fase: 'Entrega', t: 'Confirmar a vistoria de entrega: 28/10 às 9h', d: 'Leva cerca de 2 horas · o book de obra é entregue depois do termo', due: '26/10', ch: [['Eng. Marcos (construtora) · agendou', 'done'], ['Marina (Portalux Esquadrias)', 'now']] },
+    { id: 'pp-rm8', obra: 'pp', t: 'Medição de outubro (RM-08) · reembolso', d: 'R$ 1.200.000 de custo + taxa 12% = R$ 1.344.000', due: '18/11', ch: [['Eng. Marcos (construtora) · preparou', 'done'], ['Lucas (Colégio Horizonte)', 'now'], ['Mantenedora (acima de R$ 300 mil)', '']] },
+    { id: 'pp-cor', obra: 'pp', t: 'Cor do piso vinílico das salas (3 opções)', d: 'Mesmo preço nas 3 opções · precisa até 25/11 para a compra', due: '20/11', ch: [['Eng. Marcos (construtora) · preparou', 'done'], ['Lucas (Colégio Horizonte)', 'now']] },
+    { id: 'aurora-taxa', obra: 'aurora', t: 'Autorizar a taxa de reanálise do projeto de incêndio', d: 'R$ 2.000 (taxa do órgão) · acelera a retomada', due: '14/11', ch: [['Eng. Ana (construtora) · preparou', 'done'], ['Lucas (Colégio Aurora)', 'now']] },
+    { id: 'atlas-vis', obra: 'atlas', t: 'Confirmar a vistoria de entrega: 19/11 às 10h', d: 'Na vistoria, você assina o termo de entrega e recebe o book', due: '17/11', ch: [['Eng. Ana (construtora) · agendou', 'done'], ['Bruno Carvalho (Atlas)', 'now']] }
+  ],
+  aditivos: {
+    pp: [['AD-01', 'Ampliação do refeitório (40 m²)', 180000, '+6 dias (já na entrega de 15/07)', 'ok']],
+    aurora: [],
+    atlas: [['AD-01', 'Mudança da posição de 3 tomadas (pedido do cliente)', 900, '+0 dia', 'ok']],
+    rp: [['AD-01', '2 niveladoras de doca a mais', 90000, '+0 dia', 'wait']]
+  },
+
+  /* ---------- fornecedores (nomes inventados; base única da construtora) ---------- */
+  criterios: [['prazo', 'Prazo'], ['qualidade', 'Qualidade'], ['preco', 'Preço e condições'], ['atendimento', 'Atendimento'], ['pos', 'Pós-venda e garantia']],
+  fornecedores: [
+    { id: 'alfa', n: 'Pré-Moldados Alfa', cat: 'Estrutura pré-moldada', cont: 'Sr. Jorge · comercial', notas: [4.7, 4.8, 4.2, 4.6, 4.7], aval: 12, rec: 92,
+      obras: ['pp', 'rp'], docs: [['CNPJ e contrato social', 'ok'], ['Certidões negativas', 'válidas até 03/2027'], ['Seguro de responsabilidade civil', 'ok'], ['Atestado de capacidade técnica', 'ok']],
+      hist: [['pp', 'Pedido · estrutura do bloco A e B', 'entregue · avaliado'], ['rp', 'Cotação · estrutura do galpão', 'em análise']],
+      coment: ['"Montagem rápida e equipe organizada." · Eng. Marcos', '"Frete caro para fora do Vale: negociar entrega inclusa." · Compras'] },
+    { id: 'beta', n: 'Beta Estruturas', cat: 'Estrutura pré-moldada', cont: 'Sra. Lúcia · orçamentos', notas: [3.2, 4.0, 4.6, 3.8, 3.5], aval: 9, rec: 67,
+      obras: ['aurora', 'rp'], docs: [['CNPJ e contrato social', 'ok'], ['Certidões negativas', 'vence em 30 dias'], ['Seguro de responsabilidade civil', 'ok'], ['Atestado de capacidade técnica', 'ok']],
+      hist: [['aurora', 'Pedido · pilares e vigas', 'entregue · avaliado'], ['rp', 'Cotação · estrutura do galpão', 'em análise']],
+      coment: ['"Atrasou 9 dias os pilares na Aurora." · Eng. Ana', '"Preço bom; exigir cronograma de fabricação por escrito." · Compras'], lig: ['OC-011 · atraso na entrega de pilares (Aurora)'] },
+    { id: 'gama', n: 'Gama Pré-Fabricados', cat: 'Estrutura pré-moldada', cont: 'Sr. Davi · engenharia', notas: [4.3, 4.3, 3.9, 4.4, 4.1], aval: 7, rec: 86,
+      obras: ['rp'], docs: [['CNPJ e contrato social', 'ok'], ['Certidões negativas', 'ok'], ['Seguro de responsabilidade civil', 'pendente'], ['Atestado de capacidade técnica', 'ok']],
+      hist: [['rp', 'Cotação · estrutura do galpão', 'em análise']],
+      coment: ['"Bom projeto de fabricação; pede 60 dias para começar." · Eng. Marcos'] },
+    { id: 'omega', n: 'Ômega Pisos', cat: 'Pisos e contrapiso', cont: 'Sr. Ivo · obras', notas: [3.6, 3.2, 4.4, 3.9, 4.0], aval: 8, rec: 63,
+      obras: ['pp'], docs: [['CNPJ e contrato social', 'ok'], ['Certidões negativas', 'ok'], ['Seguro de responsabilidade civil', 'ok']],
+      hist: [['pp', 'Pedido · contrapiso e piso vinílico', 'em execução']],
+      coment: ['"Refez o contrapiso do bloco B por conta própria; acompanhar o nivelamento." · Eng. Marcos'], lig: ['RT-003 · retrabalho do contrapiso (pago pelo fornecedor)'] },
+    { id: 'sigma', n: 'Sigma Alvenarias', cat: 'Alvenaria e vedações', cont: 'Sr. Renato · encarregado', notas: [4.1, 3.7, 4.3, 4.0, 3.9], aval: 10, rec: 80,
+      obras: ['pp', 'aurora'], docs: [['CNPJ e contrato social', 'ok'], ['Certidões negativas', 'ok'], ['Seguro de responsabilidade civil', 'ok']],
+      hist: [['pp', 'Pedido · alvenaria blocos A, B e C', 'em execução'], ['aurora', 'Pedido · alvenaria bloco 1', 'pausado']],
+      coment: ['"Encarregado novo no bloco C; pedir troca se repetir o problema." · Eng. Marcos'], lig: ['RNC-007 · alvenaria fora de prumo (pago pelo fornecedor)'] },
+    { id: 'delta', n: 'Delta Elétrica', cat: 'Instalações elétricas', cont: 'Eng. Sônia · projetos', notas: [4.5, 4.4, 4.0, 4.7, 4.5], aval: 15, rec: 93,
+      obras: ['pp', 'atlas', 'rp'], docs: [['CNPJ e contrato social', 'ok'], ['Certidões negativas', 'ok'], ['ART do responsável técnico', 'ok']],
+      hist: [['pp', 'Pedido · elétrica e dados', 'em execução'], ['atlas', 'Pedido · elétrica e dados', 'entregue · avaliado'], ['rp', 'Cotação · instalações', 'aguarda compatibilização']],
+      coment: ['"Sempre manda o as-built junto com a medição." · Eng. Ana'] },
+    { id: 'epsilon', n: 'Épsilon Climatização', cat: 'Ar-condicionado', cont: 'Sr. Paulo · comercial', notas: [4.0, 4.5, 3.8, 4.2, 3.6], aval: 6, rec: 83,
+      obras: ['atlas', 'pp'], docs: [['CNPJ e contrato social', 'ok'], ['Certidões negativas', 'ok'], ['Certificado de garantia (Atlas)', 'pendente']],
+      hist: [['atlas', 'Pedido · 2 aparelhos e instalação', 'entregue · falta certificado'], ['pp', 'Cotação · climatização das salas', 'cotando']],
+      coment: ['"Certificado de garantia da Atlas ainda não veio; cobrar." · Eng. Ana'] },
+    { id: 'kappa', n: 'Kappa Forros e Drywall', cat: 'Drywall e forro', cont: 'Sra. Rita · vendas', notas: [4.8, 4.7, 4.1, 4.9, 4.6], aval: 11, rec: 100,
+      obras: ['atlas'], docs: [['CNPJ e contrato social', 'ok'], ['Certidões negativas', 'ok']],
+      hist: [['atlas', 'Pedido · drywall e forro', 'entregue · avaliado']],
+      coment: ['"Trocou 2 placas manchadas na garantia em 1 dia." · Eng. Ana'], lig: ['RT-001 · troca de placas (garantia do fornecedor)'] },
+    { id: 'zeta', n: 'Zeta Esquadrias', cat: 'Esquadrias', cont: 'Sr. Hugo · orçamentos', notas: [4.2, 4.4, 3.9, 4.1, 4.3], aval: 5, rec: 80,
+      obras: ['pp', 'rp'], docs: [['CNPJ e contrato social', 'ok'], ['Certidões negativas', 'ok']],
+      hist: [['pp', 'Pedido · esquadrias de alumínio', 'em fabricação'], ['rp', 'Cotação · portas de doca', 'aguarda compatibilização']],
+      coment: ['"Prazo de fabricação longo: pedir com 60 dias." · Compras'] }
+  ],
+
+  /* ---------- mapa de cotação: 3 pré-moldados com preços próximos (obra vitrine) ---------- */
+  cotacao: {
+    obra: 'rp', item: 'Estrutura pré-moldada do galpão (pilares, vigas e terças)', etapa: 2,
+    propostas: [
+      { f: 'alfa', preco: 1180000, frete: 0, freteTxt: 'incluso', prazo: '50 dias', cond: '30/60/90 dias', val: '20/04' },
+      { f: 'beta', preco: 1150000, frete: 18000, freteTxt: 'R$ 18.000', prazo: '60 dias', cond: '30/60 dias', val: '15/04' },
+      { f: 'gama', preco: 1200000, frete: 0, freteTxt: 'incluso', prazo: '45 dias', cond: 'entrada + 3x', val: '18/04' }
+    ],
+    pesoNota: 0.6, pesoPreco: 0.4
+  },
+
+  /* ---------- ocorrências (4 tipos) ---------- */
+  caminho: ['Aberta', 'Em análise', 'Em correção', 'Verificação', 'Encerrada'],
+  tipos: { oc: ['📌', 'Ocorrência'], rnc: ['🧾', 'Não conformidade'], sin: ['🌪️', 'Sinistro'], ret: ['🔁', 'Retrabalho'] },
+  ocorrencias: [
+    { id: 'RNC-007', tipo: 'rnc', obra: 'pp', t: 'Alvenaria do bloco C fora de prumo', local: 'Bloco C · 2º pavimento · eixos 4 a 6', etapa: 'Alvenaria e vedações', grav: 'média', resp: 'Eng. Marcos', prazo: '22/11', passo: 3, data: '05/11',
+      forn: 'sigma', req: 'Projeto e especificação: desvio de prumo de até 3 mm por metro (exemplo)', fato: 'Medido até 8 mm por metro em 14 m² de parede',
+      causa: 'Execução sem conferência de prumo a cada fiada', imediata: 'Trecho isolado e serviço suspenso nesse eixo', corretiva: 'Demolir e refazer os 14 m², com conferência por prumo a laser a cada 3 fiadas', verif: 'Eng. Marcos confere em 20/11 com laser e foto',
+      custo: 6000, paga: 'Sigma Alvenarias (fornecedor)', cobrado: false, impacto: '+0 dia (folga da etapa)', interno: 'Encarregado novo na Sigma; pedir troca se repetir.' },
+    { id: 'RT-003', tipo: 'ret', obra: 'pp', t: 'Contrapiso do bloco B refeito', local: 'Bloco B · térreo · 180 m²', etapa: 'Pisos e revestimentos', grav: 'alta', resp: 'Eng. Marcos', prazo: '26/11', passo: 2, data: '03/11',
+      forn: 'omega', refeito: '180 m² de contrapiso com nivelamento fora da tolerância', causaTipo: 'Execução', respCausa: 'Ômega Pisos', horas: 96,
+      custo: 18000, paga: 'Ômega Pisos (fornecedor)', cobrado: false, impacto: '+2 dias na etapa de pisos, sem impacto na entrega', interno: 'Aplicar desconto de 5% na próxima medição da Ômega.' },
+    { id: 'SIN-002', tipo: 'sin', obra: 'pp', t: 'Vendaval danificou a cobertura do bloco A', local: 'Bloco A · cobertura · 120 m²', etapa: 'Cobertura', grav: 'alta', resp: 'Carlos (gestor)', prazo: '30/11', passo: 1, data: '08/11',
+      oque: 'Chuva forte com vento levantou 120 m² de telhas e molhou o forro já instalado', bo: 'BO 0000/2026 (fictício)', apolice: 'Risco de engenharia · apólice 00.000.000-0 (fictícia)', seguradora: 'Seguradora Exemplo', nSin: 'SIN-2026-0000 (fictício)', franquia: 10000, prejuizo: 46000, ressarc: 36000,
+      custo: 46000, paga: 'Seguro (R$ 36.000) + franquia pela construtora (R$ 10.000)', cobrado: false, impacto: '+3 dias na pintura do bloco A, sem impacto na entrega', interno: 'Reforçar amarração das telhas nas próximas obras de cobertura alta.' },
+    { id: 'OC-015', tipo: 'oc', obra: 'pp', t: 'Atraso na entrega de blocos cerâmicos', local: 'Canteiro', etapa: 'Alvenaria e vedações', grav: 'média', resp: 'Compras', prazo: '14/11', passo: 0, data: '12/11',
+      custo: 0, paga: '—', cobrado: false, impacto: 'alvenaria do bloco C pode parar 1 dia', interno: 'Segundo atraso do mesmo distribuidor.' },
+    { id: 'OC-014', tipo: 'oc', obra: 'pp', t: 'Falta de energia por 3 horas', local: 'Canteiro', etapa: 'Geral', grav: 'baixa', resp: 'Eng. Marcos', prazo: '10/11', passo: 4, data: '10/11',
+      custo: 0, paga: '—', cobrado: false, impacto: 'sem impacto', interno: '' },
+    { id: 'OC-011', tipo: 'oc', obra: 'aurora', t: 'Atraso de 9 dias na entrega de pilares', local: 'Bloco 1', etapa: 'Estrutura', grav: 'média', resp: 'Eng. Ana', prazo: '30/09', passo: 4, data: '21/09', forn: 'beta',
+      custo: 0, paga: '—', cobrado: false, impacto: 'absorvido antes da pausa', interno: 'Entra na nota de prazo da Beta.' },
+    { id: 'RT-001', tipo: 'ret', obra: 'atlas', t: 'Troca de 2 placas de forro manchadas', local: 'Sala de reunião', etapa: 'Drywall e forro', grav: 'baixa', resp: 'Eng. Ana', prazo: '06/11', passo: 4, data: '04/11', forn: 'kappa',
+      refeito: '2 placas de forro', causaTipo: 'Material', respCausa: 'Kappa Forros (garantia)', horas: 3, custo: 600, paga: 'Kappa Forros (garantia)', cobrado: false, impacto: '+0 dia', interno: '' },
+    { id: 'RT-002', tipo: 'ret', obra: 'atlas', t: 'Mudança da posição de 3 tomadas', local: 'Estações de trabalho', etapa: 'Elétrica e dados', grav: 'baixa', resp: 'Eng. Ana', prazo: '07/11', passo: 4, data: '05/11',
+      refeito: '3 pontos de tomada', causaTipo: 'Mudança do cliente', respCausa: 'Pedido do cliente (aditivo AD-01)', horas: 6, custo: 900, paga: 'Cliente · aditivo AD-01 aprovado', cobrado: true, impacto: '+0 dia', interno: '' }
+  ],
+
+  /* ---------- book de obra (R9) ---------- */
+  book: {
+    capitulos: ['Capa, ficha da obra e índice', 'Fotos por etapa (antes, durante e depois)', 'Projetos e as-built', 'ARTs/RRTs, alvarás e aprovações', 'Relatórios: diários, não conformidades, medições e ensaios', 'Notas fiscais', 'Certificados, laudos e garantias (com validade)', 'Documentação das empresas', 'Manual de uso e manutenção', 'Termo de entrega'],
+    falta: ['Ficha técnica final da obra', 'Fotos das etapas ainda não executadas', 'As-built das instalações', 'ART das instalações elétricas', 'Ensaios do concreto e diários finais', 'Notas fiscais das compras em aberto', 'Laudo de estanqueidade da cobertura', 'Documentos de empresas a contratar', 'Manual de uso e manutenção', 'Termo de entrega assinado'],
+    paginas: [2, 36, 22, 10, 48, 30, 14, 12, 18, 2]
+  },
+
+  /* ---------- diário de obra com tarefas e apontamentos (obra: Colégio Horizonte) ---------- */
+  diario: {
+    obra: 'pp', data: '12/11', eng: 'Eng. Marcos', clima: '⛅ Nublado, sem chuva',
+    equipes: ['Ômega Pisos', 'Sigma Alvenarias', 'Delta Elétrica', 'Zeta Esquadrias', 'Equipe própria'],
+    tarefas: [
+      { id: 't1', n: 'Contrapiso · Bloco B', prev: 600, u: 'm²', exec: 240, st: 'exec', eq: 'Ômega Pisos', et: 6, peso: 0.25, pes: 6, hrs: 8, qtd: 120 },
+      { id: 't2', n: 'Alvenaria · Bloco C, 2º pav.', prev: 420, u: 'm²', exec: 300, st: 'exec', eq: 'Sigma Alvenarias', et: 2, peso: 0.2, pes: 5, hrs: 8, qtd: 40 },
+      { id: 't3', n: 'Eletrodutos · Bloco A', prev: 800, u: 'm', exec: 560, st: 'exec', eq: 'Delta Elétrica', et: 4, peso: 0.2, pes: 3, hrs: 8, qtd: 90 },
+      { id: 't4', n: 'Reparo da cobertura · Bloco A (sinistro)', prev: 120, u: 'm²', exec: 0, st: 'todo', eq: 'Equipe própria', et: 3, peso: 0.1, pes: 4, hrs: 8, qtd: 60 },
+      { id: 't5', n: 'Esquadrias · Bloco A (conferência de vãos)', prev: 36, u: 'un.', exec: 0, st: 'todo', eq: 'Zeta Esquadrias', et: 7, peso: 0.1, pes: 2, hrs: 4, qtd: 18 },
+      { id: 't6', n: 'Pintura · Bloco A (1ª demão)', prev: 900, u: 'm²', exec: 0, st: 'imp', motivo: 'Aguardando o reparo da cobertura (sinistro SIN-002)', eq: 'Equipe própria', et: 7, peso: 0.15, pes: 4, hrs: 8, qtd: 150 },
+      { id: 't7', n: 'Forro · Bloco A térreo', prev: 300, u: 'm²', exec: 300, st: 'done', eq: 'Equipe própria', et: 7, peso: 0.05 },
+      { id: 't8', n: 'Rampa de acesso · concretagem', prev: 12, u: 'm³', exec: 12, st: 'done', eq: 'Equipe própria', et: 0, peso: 0.02 }
+    ],
+    apontamentos: [
+      { h: '09:40', tid: 't2', emp: 'Sigma Alvenarias', pes: 5, hrs: 4, qtd: 30, fotos: 2, obs: 'Prumo conferido a laser a cada 3 fiadas' },
+      { h: '10:15', tid: 't3', emp: 'Delta Elétrica', pes: 3, hrs: 4, qtd: 80, fotos: 1, obs: '' }
+    ],
+    efetivoBase: 18, entregas: ['🚚 Cimento · 200 sacos · entregue 08:10', '⏳ Blocos cerâmicos · 8.000 un. · atrasada (OC-015)'], visitas: ['👤 Lucas Almeida (cliente) · visita agendada às 15h']
+  },
+
+  /* ---------- painéis (BI próprio) ---------- */
+  bi: {
+    taxaMes: { rp: 14000, pp: 144000, aurora: 0, atlas: 6500 },
+    comprasPendentes: [['rp', 'Estrutura pré-moldada', 'aguardando aprovação do cliente'], ['pp', 'Piso vinílico das salas', 'aguardando a cor (decisão do cliente)'], ['pp', 'Climatização das salas', 'cotando'], ['aurora', 'Telhas da cobertura', 'pronta para liberar na retomada'], ['atlas', 'Certificado de garantia do ar-condicionado', 'cobrar fornecedor']]
+  }
+};
+</script>
+<style>
+:root{--page:#f1f0ec;--card:#fff;--ink:#111;--ink2:#46453f;--line:#dcdbd4;--ring:rgba(0,0,0,.12);--soft:#f6f5f1;--blue:#1f63b8;--blue-t:#d3e4fa;--gold:#8a5a00;--gold-b:#e9b949;--good:#0b6b2e;--good-bg:#e3f4e8;--warn:#7a4b00;--warn-bg:#fdf0d2;--crit:#a51d1d;--crit-bg:#fbe3e3;--pause:#5b3a9e;--pause-bg:#efe8fb;--btn:#16181b;--btn-ink:#fff}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--page);color:var(--ink);overflow-x:hidden}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+select{min-height:44px;border-radius:10px;border:1px solid #9c9a92;background:#fff;padding:6px 10px;max-width:100%}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.top{position:sticky;top:0;z-index:30;display:flex;gap:8px 14px;align-items:center;flex-wrap:wrap;padding:8px 18px;background:#16181b;color:#fff}
+.brand{display:flex;gap:10px;align-items:center;margin-right:auto}
+.logo{width:40px;height:40px;border-radius:10px;border:2px dashed #9aa0a8;display:grid;place-items:center;font-weight:800;color:#cfd3d8;flex:none}
+.brand b{font-size:17px}.brand small{display:block;color:#c8ccd2;font-size:16px}
+.selo{font-size:16px;font-weight:600;border:1px solid #c8ccd2;color:#e6e8eb;border-radius:999px;padding:0 8px;margin-left:6px;white-space:nowrap}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.tabs .grp{color:#aeb3ba;font-size:16px;margin:0 2px 0 6px}
+.tabs button{background:transparent;color:#e6e8eb;border:1px solid #4a4e55;border-radius:999px;padding:8px 14px;min-height:44px}
+.tabs button[aria-selected=true]{background:#fff;color:#111;border-color:#fff;font-weight:650}
+.tabs button.cli{border-color:#e9b949}
+.pres{background:#2a2d33;color:#fff;border:1px solid #6b7079;border-radius:999px;padding:8px 14px;min-height:44px}
+.pres[aria-pressed=true]{background:#e9b949;color:#111;border-color:#e9b949;font-weight:700}
+body.present .tabs .int,body.present .tabs .grp.int{display:none}
+.tenant{background:#fff;border-bottom:1px solid var(--line);padding:8px 18px;display:flex;gap:8px 12px;align-items:center;flex-wrap:wrap}
+.tlogo{width:30px;height:30px;border-radius:7px;background:#e9b949;color:#111;display:grid;place-items:center;font-weight:800;font-size:16px;flex:none}
+.demo{display:inline-flex;align-items:center;gap:6px;background:#fff4c2;color:#5a3d00;border:2px dashed #c79a1e;border-radius:999px;padding:2px 12px;font-weight:700;font-size:16px;white-space:nowrap}
+#demoFix{position:fixed;left:10px;bottom:10px;z-index:70;box-shadow:0 6px 18px rgba(0,0,0,.2)}
+main{max-width:1280px;margin:0 auto;padding:16px 18px 70px}
+.intro{background:var(--card);border:1px solid var(--ring);border-left:5px solid var(--blue);border-radius:12px;padding:10px 14px;margin-bottom:14px;color:var(--ink2)}
+.intro b{color:var(--ink)}
+.intro.int{border-left-color:#e9b949}
+.lay{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--ring);border-radius:14px;padding:14px 16px;min-width:0}
+.c3{grid-column:span 3}.c4{grid-column:span 4}.c5{grid-column:span 5}.c6{grid-column:span 6}.c7{grid-column:span 7}.c8{grid-column:span 8}.c12{grid-column:span 12}
+@media(max-width:1000px){.c3,.c4{grid-column:span 6}.c5,.c6,.c7,.c8{grid-column:span 12}}
+@media(max-width:640px){.c3,.c4{grid-column:span 12}main{padding:10px 10px 70px}.top{padding:8px 10px;position:static}.tenant{padding:8px 10px}}
+h2{font-size:22px;margin:0 0 4px}h3{font-size:18px;margin:0 0 8px}h4{font-size:16px;margin:14px 0 6px;color:var(--ink2);text-transform:uppercase;letter-spacing:.03em}
+.sub{color:var(--ink2);font-size:16px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.sp{justify-content:space-between}
+.btn{border:0;border-radius:10px;padding:9px 14px;background:var(--btn);color:var(--btn-ink);font-weight:650;min-height:44px;min-width:44px}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid #9c9a92}
+.btn.ok{background:var(--good);color:#fff}
+.btn.sm{padding:6px 12px}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn[aria-pressed=true]{background:var(--blue);color:#fff;border-color:var(--blue)}
+.pill{display:inline-flex;gap:5px;align-items:center;border-radius:999px;padding:1px 10px;font-size:16px;font-weight:650;border:1px solid transparent;max-width:100%}
+.p-good{background:var(--good-bg);color:var(--good);border-color:#a9d9b8}.p-warn{background:var(--warn-bg);color:var(--warn);border-color:#ecd08a}.p-crit{background:var(--crit-bg);color:var(--crit);border-color:#efb1b1}.p-pause{background:var(--pause-bg);color:var(--pause);border-color:#c9b6f0}.p-info{background:#e5eefa;color:#1a4f93;border-color:#b5cdee}.p-gray{background:var(--soft);color:var(--ink2);border-color:var(--line)}
+.tag{font-size:16px;font-weight:650;border-radius:6px;padding:0 7px;background:#ece7fb;color:#4b2c8a;border:1px dashed #8d74c9}
+.itag{font-size:16px;font-weight:700;border-radius:6px;padding:0 7px;background:#fff4c2;color:#5a3d00;border:1px solid #c79a1e;white-space:nowrap}
+.q{display:inline-grid;place-items:center;width:44px;height:44px;margin:-10px -6px -10px -4px;padding:0;border:0;background:transparent;vertical-align:middle}
+.q span{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;border:1px solid #9c9a92;background:#fff;color:var(--ink2);font-weight:700;font-size:16px;line-height:1}
+#qtip{position:absolute;z-index:60;max-width:320px;background:#16181b;color:#fff;border-radius:10px;padding:10px 12px;font-size:16px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.answer{font-size:26px;font-weight:700;line-height:1.25;margin:2px 0 6px}
+.answer small{display:block;font-size:16px;font-weight:400;color:var(--ink2);margin-top:4px}
+.kpi .big{font-size:36px;font-weight:700;line-height:1.1;margin:4px 0;font-variant-numeric:tabular-nums}
+.kpi .mid{font-size:24px;font-weight:700;font-variant-numeric:tabular-nums}
+.bar{position:relative;height:14px;border-radius:999px;background:var(--blue-t);margin:6px 0}
+.bar>i{display:block;height:100%;border-radius:999px;background:var(--blue);transition:width .6s}
+.bar .mk{position:absolute;top:-5px;width:3px;height:24px;background:var(--ink);border-radius:2px}
+.bar.money{background:repeating-linear-gradient(45deg,#f7ecd3 0 6px,#fdf6e6 6px 12px);border:1px solid #d9b25a}
+.bar.money>i{background:repeating-linear-gradient(45deg,#b07a10 0 6px,#8a5a00 6px 12px)}
+.bar.green>i{background:var(--good)}
+.bar.sm{height:10px;margin:3px 0}
+details.sec{background:var(--card);border:1px solid var(--ring);border-radius:14px;margin-top:12px}
+details.sec>summary{list-style:none;cursor:pointer;padding:12px 16px;display:flex;gap:6px 10px;align-items:center;flex-wrap:wrap;min-height:56px}
+details.sec>summary::-webkit-details-marker{display:none}
+details.sec>summary::before{content:"▸";font-size:16px;color:var(--ink2);transition:transform .2s}
+details.sec[open]>summary::before{transform:rotate(90deg)}
+details.sec>summary b{font-size:18px}
+details.sec>summary .sub{margin-left:auto}
+.secb{padding:0 16px 16px}
+table{border-collapse:collapse;width:100%;font-size:16px}
+th,td{text-align:left;padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:16px;color:var(--ink2);font-weight:650}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}th.n{white-space:normal}
+tfoot td{font-weight:700;border-bottom:0}
+.up{color:var(--crit);font-weight:700}.dn{color:var(--good);font-weight:700}
+@media(max-width:700px){
+ table.rt thead{display:none}
+ table.rt,table.rt tbody,table.rt tfoot{display:block}
+ table.rt tr{display:block;border-bottom:1px solid var(--line);padding:6px 0}
+ table.rt td{display:flex;justify-content:space-between;gap:12px;border:0;padding:3px 0;text-align:right;white-space:normal}
+ table.rt td::before{content:attr(data-l);font-weight:600;color:var(--ink2);text-align:left;flex:none;max-width:48%}
+ table.rt td:empty{display:none}
+ table.rt td[data-l=""]::before{display:none}
+ table.rt td.first{display:block;text-align:left}
+ table.rt td.first::before{display:none}
+}
+.chain{display:flex;gap:4px;align-items:center;flex-wrap:wrap;margin:6px 0}
+.chain span{border-radius:8px;padding:2px 8px;background:var(--soft);border:1px solid var(--line)}
+.chain span.done{background:var(--good-bg);color:var(--good);border-color:#a9d9b8}
+.chain span.now{background:var(--warn-bg);color:var(--warn);border-color:#ecd08a;font-weight:700}
+.dec{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:8px 0;background:#fff}
+.dec.done{background:var(--soft)}
+.steps{display:flex;gap:3px;margin:4px 0}.steps i{flex:1;height:8px;border-radius:4px;background:var(--line)}.steps i.on{background:var(--blue)}.steps i.cur{background:var(--gold-b)}
+.alert{border-radius:12px;padding:10px 12px;margin:8px 0;border:1px solid}
+.a-crit{background:var(--crit-bg);border-color:#efb1b1;color:#5c0f0f}.a-warn{background:var(--warn-bg);border-color:#ecd08a;color:#4a2e00}.a-pause{background:var(--pause-bg);border-color:#c9b6f0;color:#2f1d57}.a-info{background:#e5eefa;border-color:#b5cdee;color:#123a6d}.a-good{background:var(--good-bg);border-color:#a9d9b8;color:#0a4d22}
+.pausecard{background:var(--pause-bg);border:2px solid var(--pause);border-radius:14px;padding:14px 16px;margin:12px 0;color:#22143f}
+.pausecard h3{font-size:20px;margin:0 0 4px}
+.clock{font-size:28px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--pause)}
+.who{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.who span{border:1px solid #c9b6f0;border-radius:999px;padding:2px 10px;background:#fff;color:#3d2a66}
+.who span.on{background:var(--pause);color:#fff;border-color:var(--pause);font-weight:700}
+.tl{list-style:none;margin:6px 0;padding:0}
+.tl li{padding:4px 0 4px 28px;position:relative}
+.tl li::before{content:attr(data-i);position:absolute;left:0;top:4px}
+/* jornada e fases */
+.jsel{display:flex;gap:6px;flex-wrap:wrap;align-items:center;background:#fff;border:2px solid #e9b949;border-radius:14px;padding:10px 12px;margin-bottom:12px}
+.jsel b{margin-right:4px}
+.jsel button{border:1px solid #9c9a92;background:#fff;border-radius:999px;padding:6px 14px;min-height:44px}
+.jsel button[aria-pressed=true]{background:#16181b;color:#fff;border-color:#16181b;font-weight:700}
+.phases{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin:8px 0}
+.phases div{border-radius:10px;padding:6px 8px;background:var(--soft);border:1px solid var(--line);font-size:16px;text-align:center;overflow-wrap:anywhere}
+.phases div.done{background:var(--good-bg);border-color:#a9d9b8;color:var(--good)}
+.phases div.now{background:#16181b;color:#fff;border-color:#16181b;font-weight:700}
+@media(max-width:820px){.phases{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:420px){.phases{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.persona{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.persona button{display:flex;gap:10px;align-items:center;text-align:left;border:1px solid #9c9a92;background:#fff;border-radius:14px;padding:8px 14px;min-height:56px}
+.persona button[aria-pressed=true]{border:2px solid var(--blue);background:#eef4fc}
+.av{width:38px;height:38px;border-radius:50%;background:#d3e4fa;color:#123a6d;display:grid;place-items:center;font-weight:800;flex:none}
+.obras{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:12px}
+@media(max-width:700px){.obras{grid-template-columns:1fr}}
+.obra{border:1px solid var(--ring);background:#fff;border-radius:14px;padding:12px 14px;text-align:left;min-height:44px;width:100%}
+.obra[aria-pressed=true]{border:2px solid var(--blue);background:#eef4fc}
+/* ocorrências */
+.flow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin:6px 0}
+.flow span{border-radius:8px;padding:3px 6px;background:var(--soft);border:1px solid var(--line);text-align:center;font-size:16px;overflow-wrap:anywhere}
+.flow span.done{background:var(--good-bg);border-color:#a9d9b8;color:var(--good)}
+.flow span.now{background:var(--warn-bg);border-color:#ecd08a;color:var(--warn);font-weight:700}
+@media(max-width:560px){.flow{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.occ{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:8px 0;background:#fff}
+.occ.sel{border:2px solid var(--blue)}
+.kanban{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.kanban>div{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:8px;min-width:0}
+.kanban h4{margin:0 0 6px}
+.kcard{display:block;width:100%;text-align:left;background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px;margin:6px 0;min-height:44px}
+.kcard[aria-pressed=true]{border:2px solid var(--blue)}
+@media(max-width:1000px){.kanban{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.kanban{grid-template-columns:1fr}}
+.who-pays{border:2px solid var(--good);background:var(--good-bg);border-radius:12px;padding:10px 12px;margin:8px 0;color:#0a3d1b}
+.who-pays.charged{border-color:#c79a1e;background:#fff8e1;color:#4a2e00}
+/* "PDF" */
+.pdf{background:#fff;max-width:760px;margin:0 auto;border:1px solid #bbb;box-shadow:0 10px 30px rgba(0,0,0,.18);padding:28px 30px;font-family:Georgia,"Times New Roman",serif}
+.pdf h2{font-family:system-ui,sans-serif}
+.pdf table td,.pdf table th{border:1px solid #ccc}
+.pdf .ph{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0}
+.pdf .ph figure{margin:0}
+.pdf .ph figcaption{font-size:16px;text-align:center}
+@media(max-width:560px){.pdf{padding:16px}.pdf .ph{grid-template-columns:1fr}}
+.modal{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.5);overflow:auto;padding:16px}
+.modal[hidden]{display:none}
+.modal>.mbox{max-width:820px;margin:20px auto}
+.mbar{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-bottom:8px}
+/* fornecedores */
+.stars{color:#8a5a00;font-weight:700;white-space:nowrap}
+.crit{display:grid;grid-template-columns:minmax(0,1fr) 110px 44px;gap:6px;align-items:center;margin:3px 0}
+.crit .bar{margin:0}
+.sup{display:flex;justify-content:space-between;gap:8px;align-items:center;width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:12px;padding:8px 12px;margin:6px 0;min-height:56px}
+.sup[aria-pressed=true]{border:2px solid var(--blue);background:#eef4fc}
+.qmap td.best{background:var(--good-bg)}
+.cmt{background:#fff8e1;border:1px dashed #c79a1e;border-radius:10px;padding:8px 10px;margin:6px 0}
+/* gráficos */
+svg text{font-family:inherit}
+.chart{width:100%;height:auto;display:block}
+.hbar{display:grid;grid-template-columns:minmax(0,180px) minmax(0,1fr) 90px;gap:8px;align-items:center;margin:6px 0}
+.hbar .trk{position:relative;height:18px;background:var(--soft);border-radius:4px}
+.hbar .trk i{position:absolute;top:0;bottom:0;border-radius:4px}
+.hbar .zero{position:absolute;top:-3px;bottom:-3px;width:2px;background:#888;left:50%}
+@media(max-width:560px){.hbar{grid-template-columns:1fr 80px}.hbar .trk{grid-column:1/-1;grid-row:2}}
+.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--ink2);margin:4px 0 8px}
+.legend i{display:inline-block;width:22px;height:4px;border-radius:2px;vertical-align:middle;margin-right:6px}
+.tiles{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.tiles .card{padding:10px 12px}
+@media(max-width:1000px){.tiles{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:560px){.tiles{grid-template-columns:1fr 1fr}}
+/* book */
+.cover{background:linear-gradient(160deg,#16181b,#2c3138);color:#fff;border-radius:10px;padding:18px;min-height:260px;display:flex;flex-direction:column;justify-content:space-between}
+.cover .qr{width:64px;height:64px;background:conic-gradient(#fff 0 25%,#16181b 0 50%,#fff 0 75%,#16181b 0) 0 0/16px 16px;border:4px solid #fff}
+.chap{display:grid;grid-template-columns:minmax(0,1fr) 120px 56px;gap:8px;align-items:center;padding:4px 0;border-bottom:1px solid var(--line)}
+@media(max-width:560px){.chap{grid-template-columns:minmax(0,1fr) 56px}.chap .bar{grid-column:1/-1;grid-row:2}}
+/* celulares */
+.phones{display:flex;gap:28px;justify-content:center;align-items:flex-start;flex-wrap:wrap}
+.pwrap{width:390px;max-width:100%}
+.pcap{text-align:center;margin:0 0 8px;font-weight:700}.pcap small{display:block;font-weight:400;color:var(--ink2);font-size:16px}
+.phone{border-radius:44px;background:#111;padding:10px;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+.screen{background:var(--page);border-radius:34px;height:820px;overflow:auto;position:relative;padding:0 14px 18px;font-size:18px}
+.ptop{position:sticky;top:0;z-index:5;background:var(--page);padding:16px 0 8px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ptop small{display:block;font-size:16px;color:var(--ink2)}.ptop b{font-size:19px}
+.netbar{display:flex;gap:4px 10px;flex-wrap:wrap;align-items:center;font-size:16px;border-radius:12px;padding:8px 10px;margin-bottom:10px;border:1px solid}
+.netbar.on{background:var(--good-bg);border-color:#a9d9b8;color:#0a4d22}.netbar.off{background:var(--warn-bg);border-color:#ecd08a;color:#4a2e00}
+.fb{display:flex;align-items:center;gap:10px;width:100%;min-height:56px;border-radius:14px;border:1px solid #9c9a92;background:#fff;padding:10px 14px;margin:8px 0;font-size:18px;font-weight:650;text-align:left}
+.fb.main{background:var(--btn);color:#fff;border-color:var(--btn);min-height:64px}
+.fb.pz{background:var(--pause-bg);border-color:var(--pause);color:#2f1d57}
+.ttabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin:6px 0}
+.ttabs button{border:1px solid #9c9a92;background:#fff;border-radius:10px;min-height:52px;padding:4px 2px;font-size:16px;line-height:1.15}
+.ttabs button[aria-pressed=true]{background:#16181b;color:#fff;border-color:#16181b;font-weight:700}
+.task{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin:8px 0;font-size:17px}
+.task.imp{border-color:#efb1b1;background:#fff7f7}
+.task .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.task .acts .btn{min-height:48px;font-size:16px}
+.pm{width:48px;height:48px;border-radius:12px;border:1px solid #9c9a92;background:#fff;font-size:22px;font-weight:700;flex:none}
+.stp{display:flex;align-items:center;gap:8px;margin:4px 0}.stp b{min-width:72px;text-align:center;font-size:20px}
+.voice{background:#fff;border:2px solid var(--blue);border-radius:14px;padding:12px;margin:8px 0;font-size:17px}
+.diary{list-style:none;padding:0;margin:0}.diary li{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin:6px 0;font-size:16px}
+.diary li.pz{background:var(--pause-bg);border-color:#c9b6f0}
+.sol .screen{background:#fff;--ink2:#000;--line:#000}
+.sol .screen,.sol .screen *{color:#000!important}
+.sol .task,.sol .fb,.sol .diary li,.sol .netbar{border:2px solid #000!important;background:#fff!important}
+.sol .fb.main{background:#000!important}.sol .fb.main,.sol .fb.main *{color:#fff!important}
+.simbox{border:2px dashed #8d74c9;background:#f7f3ff;border-radius:12px;padding:8px 12px;margin:10px auto 0;max-width:390px;color:#2f1d57}
+.feed{list-style:none;padding:0;margin:0}.feed li{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin:6px 0;font-size:16px}
+.feed li.new{animation:fl 1.6s}
+@keyframes fl{0%{background:#fff4c2}100%{background:#fff}}
+.toast{position:sticky;top:70px;z-index:6;margin:0 0 6px;background:#16181b;color:#fff;border-radius:12px;padding:10px 12px;font-size:16px;display:none}
+.toast.on{display:block}
+#gtoast{position:fixed;left:50%;bottom:60px;transform:translateX(-50%);z-index:95;background:#16181b;color:#fff;border-radius:12px;padding:12px 16px;width:max-content;max-width:min(92vw,560px);display:none;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+#gtoast.on{display:block}
+footer{max-width:1280px;margin:0 auto;padding:0 18px 70px;color:var(--ink2)}
+@media(max-width:440px){.phone{border-radius:0;padding:0;background:none;box-shadow:none}.screen{border-radius:12px;height:auto}.answer{font-size:22px}.kpi .big{font-size:30px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><div class="logo" aria-hidden="true">?</div><div><b id="pNome"></b><span class="selo" id="pSelo"></span><small>Esboço navegável v2</small></div></div>
+  <nav class="tabs" role="tablist" aria-label="Telas do esboço">
+    <span class="grp">Cliente:</span>
+    <button role="tab" class="cli" data-view="cliente" aria-selected="true">👤 Visão do cliente</button>
+    <span class="grp int">Interno:</span>
+    <button role="tab" class="int" data-view="campo" aria-selected="false">📱 Diário de obra</button>
+    <button role="tab" class="int" data-view="ocorr" aria-selected="false">⚠️ Ocorrências</button>
+    <button role="tab" class="int" data-view="forn" aria-selected="false">🏷️ Fornecedores e compras</button>
+    <button role="tab" class="int" data-view="gestor" aria-selected="false">🗂️ Gestor</button>
+    <button role="tab" class="int" data-view="bi" aria-selected="false">📊 Painel da diretoria</button>
+    <button role="tab" class="int" data-view="book" aria-selected="false">📘 Book de obra</button>
+  </nav>
+  <button class="pres" id="presBtn" aria-pressed="false">🎬 Só visão do cliente</button>
+</header>
+<div class="tenant"><span class="tlogo" aria-hidden="true" id="tSig"></span><span><b>Construtora: <span id="tNome"></span></b></span><span class="demo" id="demoTop"></span><span class="sub" id="tCtx" style="margin-left:auto"></span></div>
+
+<main>
+<!-- ============ CLIENTE ============ -->
+<section class="view" id="v-cliente" aria-label="Visão do cliente">
+  <div class="persona" id="persona" role="group" aria-label="Entrar como"></div>
+  <div id="cObras"></div>
+  <div id="cJornada"></div>
+  <div class="card"><div class="row sp"><span class="sub" id="cObraT"></span><span class="sub">atualizado agora</span></div><div class="answer" id="cAnswer"></div><div id="cPhases" aria-label="Fases da obra"></div></div>
+  <div id="cPause"></div>
+  <div id="cStage"></div>
+  <div class="lay" style="margin-top:12px">
+    <div class="card c4 kpi" id="kFis"></div>
+    <div class="card c4 kpi" id="kFin"></div>
+    <div class="card c4 kpi" id="kDec"></div>
+  </div>
+  <details class="sec" id="sDec" open><summary><b>✋ Decisões suas</b><span class="sub" id="sDecS"></span></summary><div class="secb" id="cDec"></div></details>
+  <details class="sec" id="sFin" open><summary><b>💰 Orçado × realizado</b><span class="sub" id="sFinS"></span></summary><div class="secb" id="cFin"></div></details>
+  <details class="sec" id="sCro"><summary><b>📅 Avanço por etapa</b><span class="sub" id="sCroS"></span></summary><div class="secb" id="cCro"></div></details>
+  <details class="sec" id="sOcc"><summary><b>⚠️ Ocorrências da obra</b><span class="sub" id="sOccS"></span></summary><div class="secb" id="cOcc"></div></details>
+  <details class="sec" id="sSup"><summary><b>🏷️ Fornecedores da sua obra</b><span class="sub" id="sSupS"></span></summary><div class="secb" id="cSup"></div></details>
+  <details class="sec" id="sBook"><summary><b>📘 Book de obra</b><span class="sub" id="sBookS"></span></summary><div class="secb" id="cBook"></div></details>
+  <details class="sec" id="sMed"><summary><b>🧾 Reembolsos e aditivos</b><span class="sub" id="sMedS"></span></summary><div class="secb" id="cMed"></div></details>
+</section>
+
+<!-- ============ DIÁRIO / CAMPO ============ -->
+<section class="view" id="v-campo" hidden aria-label="Diário de obra">
+  <div class="intro int"><b>Diário de obra com tarefas e apontamentos</b> · Colégio Horizonte. No celular da esquerda, o engenheiro aponta o que cada equipe fez. O diário do dia se monta sozinho e o avanço sai dos apontamentos. O celular da direita mostra o que o cliente vê.</div>
+  <div class="phones">
+    <div class="pwrap"><p class="pcap">App de campo<small>engenheiro e encarregado</small></p>
+      <div class="phone" id="phField"><div class="screen" id="scrField">
+        <div class="ptop"><div><small id="fCtx"></small><b id="fTit"></b></div><button class="btn ghost sm" id="solBtn" aria-pressed="false">☀️ Modo sol</button></div>
+        <div id="netbar" class="netbar on" role="status" aria-live="polite"></div>
+        <div id="fPauseBox"></div>
+        <button class="fb main" data-a="voz">🎙️ Ditar o diário de hoje</button>
+        <div id="voice" class="voice" hidden></div>
+        <div class="row" style="flex-wrap:nowrap"><button class="fb" data-a="foto">📷 Foto</button><button class="fb pz" data-a="parada">⏸ Hoje a obra está parada</button></div>
+        <div id="pForm" class="voice" hidden></div>
+        <h4>Tarefas</h4>
+        <div class="ttabs" id="tTabs" role="group" aria-label="Situação das tarefas"></div>
+        <div id="fTasks"></div>
+        <div id="apForm" class="voice" hidden></div>
+        <h4>Diário de hoje <span class="tag">monta sozinho</span></h4>
+        <div id="fDiary"></div>
+      </div></div>
+      <div class="simbox"><b>🧪 Controle de simulação</b> (não faz parte do app): <button class="btn sm" id="simNet" aria-pressed="false">🧪 simular sem sinal</button></div>
+    </div>
+    <div class="pwrap"><p class="pcap">App do cliente<small>Lucas Almeida · Colégio Horizonte</small></p>
+      <div class="phone"><div class="screen" id="scrClient">
+        <div class="ptop"><div><small>Colégio Horizonte · Penha/SC</small><b>Olá, Lucas 👋</b></div></div>
+        <div class="toast" id="toast" role="status" aria-live="polite"></div>
+        <div class="card" style="padding:12px;margin-bottom:10px"><div class="answer" id="mAnswer" style="font-size:20px"></div><div id="mBars"></div></div>
+        <div id="mPause"></div>
+        <h4>Diário de hoje (sua versão)</h4><div id="mDiary"></div>
+        <h4>Agora na obra</h4><ul class="feed" id="mFeed"></ul>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ OCORRÊNCIAS ============ -->
+<section class="view" id="v-ocorr" hidden aria-label="Ocorrências">
+  <div class="intro int"><b>Ocorrências com 4 tipos:</b> ocorrência, não conformidade, sinistro e retrabalho. Todas seguem o caminho aberta → em análise → em correção → verificação → encerrada. O custo vai para o financeiro, com "quem paga", e a ligação com o fornecedor entra na nota dele.</div>
+  <div class="card"><div class="row sp"><h3>Ocorrências · todas as obras</h3><div class="row" id="oFilt" role="group" aria-label="Filtrar por tipo"></div></div><div class="kanban" id="kanban"></div></div>
+  <div class="card" style="margin-top:12px" id="oDet"></div>
+</section>
+
+<!-- ============ FORNECEDORES E COMPRAS ============ -->
+<section class="view" id="v-forn" hidden aria-label="Fornecedores e compras">
+  <div class="intro int"><b>Fornecedores com avaliação</b> no estilo das notas do Google. <span class="itag">Decisão pendente do dono</span> base única da construtora, com histórico por obra (recomendação do CEO), ou uma base por obra. O esboço mostra a base única.</div>
+  <div class="card" style="margin-bottom:12px" id="qmap"></div>
+  <div class="lay">
+    <div class="card c5"><div class="row sp"><h3>📇 Base de fornecedores</h3><span class="sub" id="fCount"></span></div><div class="row" id="catF" role="group" aria-label="Filtrar por categoria"></div><div id="supList"></div></div>
+    <div class="card c7" id="supDet"></div>
+  </div>
+</section>
+
+<!-- ============ GESTOR ============ -->
+<section class="view" id="v-gestor" hidden aria-label="Visão do gestor">
+  <div class="intro int"><b>Tela do gestor da construtora</b> (ex.: Carlos). As 4 obras, o orçado × realizado de cada uma, os alertas e o que depende dele.</div>
+  <div class="card" style="margin-bottom:12px"><h3>Carteira · 4 obras</h3><div id="gObras"></div></div>
+  <div class="lay">
+    <div class="card c8"><div class="row sp"><h3>💰 Orçado × realizado</h3><label class="row"><span class="sub">Obra</span><select id="gSel" aria-label="Escolher obra"></select></label></div><div id="gFin"></div></div>
+    <div class="card c4"><h3>🚨 Alertas</h3><div id="gAlerts"></div></div>
+    <div class="card c12"><h3>📥 Minha fila <span class="sub">(o que depende de você)</span></h3><div id="gFila"></div></div>
+  </div>
+</section>
+
+<!-- ============ BI ============ -->
+<section class="view" id="v-bi" hidden aria-label="Painel da diretoria">
+  <div class="intro int"><b>Painel da diretoria, dentro do sistema:</b> tempo real, sem licença de terceiros. Os gráficos são do próprio produto. Quem quiser a planilha exporta para o Excel.</div>
+  <div class="row sp" style="margin-bottom:12px"><h2>Carteira da construtora</h2><button class="btn" data-a="xls">⬇️ Exportar Excel</button></div>
+  <div class="tiles" id="biTiles"></div>
+  <div class="lay" style="margin-top:12px">
+    <div class="card c6"><h3>Desvio de custo por obra</h3><div class="sub">comprometido e previsto contra o orçado</div><div id="biCusto"></div></div>
+    <div class="card c6"><h3>Desvio de prazo por obra</h3><div class="sub">dias a mais (+) na entrega prevista</div><div id="biPrazo"></div></div>
+    <div class="card c6"><h3>Curva S · Colégio Horizonte</h3><div id="biCurva"></div></div>
+    <div class="card c6"><h3>Retrabalho e sinistros (R$)</h3><div id="biRet"></div></div>
+    <div class="card c4"><h3>Ranking de fornecedores</h3><div id="biRank"></div></div>
+    <div class="card c4"><h3>Compras pendentes</h3><div id="biCmp"></div></div>
+    <div class="card c4"><h3>Taxa de administração</h3><div id="biTaxa"></div></div>
+    <div class="card c12"><h3>Produtividade das equipes hoje <span class="sub">(dos apontamentos do diário)</span></h3><div id="biProd"></div></div>
+  </div>
+</section>
+
+<!-- ============ BOOK ============ -->
+<section class="view" id="v-book" hidden aria-label="Book de obra">
+  <div class="intro int"><b>Book de obra vivo:</b> cada documento lançado no sistema (nota fiscal na compra, foto no diário, ART nos documentos) vai sozinho para o capítulo certo. Na entrega, um botão gera o PDF com capa, índice e divisórias, e uma versão digital com busca.</div>
+  <div class="row" id="bSel" role="group" aria-label="Escolher obra" style="margin-bottom:12px"></div>
+  <div id="bookBox"></div>
+</section>
+</main>
+<footer id="foot"></footer>
+<span class="demo" id="demoFix"></span>
+<div id="qtip" hidden role="tooltip"></div>
+<div id="gtoast" role="status" aria-live="polite"></div>
+<div class="modal" id="modal" hidden><div class="mbox" role="dialog" aria-modal="true" aria-label="Documento"><div class="mbar"><button class="btn" data-a="closeM">✕ Fechar</button></div><div id="mBody"></div></div></div>
+<script>
+'use strict';
+const C=CONFIG;
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const clone=o=>JSON.parse(JSON.stringify(o));
+const brl=v=>'R$ '+Math.round(v).toLocaleString('pt-BR');
+const mi=v=>Math.abs(v)>=1e6?'R$ '+(v/1e6).toFixed(2).replace('.',',')+' mi':brl(v);
+const pc=(v,d=0)=>(+v).toFixed(d).replace('.',',')+'%';
+const n1=v=>(+v).toFixed(1).replace('.',',');
+const sgn=(v,f)=>(v>0?'+':v<0?'−':'±')+f(Math.abs(v));
+const hm=()=>{const d=new Date();return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')};
+const simNow=()=>{const d=new Date();return new Date(2026,10,12,d.getHours(),d.getMinutes(),d.getSeconds())};
+const q=h=>`<button class="q" data-h="${h}" aria-label="O que é isso?"><span>?</span></button>`;
+const sup=id=>C.fornecedores.find(f=>f.id===id);
+const avg=a=>a.reduce((x,y)=>x+y,0)/a.length;
+const nota=f=>avg(f.notas);
+const starsTxt=f=>`<span class="stars">${n1(nota(f))} ★</span> <span class="sub">em ${f.aval} avaliações</span>`;
+const plural=(n,s,p)=>n+' '+(n===1?s:p);
+
+/* ---------- estado ---------- */
+const S={
+ view:'cliente',persona:'marina',sel:{marina:'rp',lucas:'pp',bruno:'atlas'},rpF:0,
+ dec:clone(C.decisoes),cot:{st:0},occ:clone(C.ocorrencias),occSel:'RNC-007',occF:'all',
+ supSel:'alfa',catF:'all',bookSel:'atlas',gSel:'pp',present:false,
+ fin:{pp:clone(C.obras.pp.fin),aurora:clone(C.obras.aurora.fin),atlas:clone(C.obras.atlas.fin)},
+ D:clone(C.diario),tTab:'exec',apT:null,ap:null,signed:false,ppPause:null,
+ feed:[{h:'10:15',t:'⚡ Delta Elétrica apontou 80 m de eletrodutos no bloco A · 📷 1 foto'},{h:'09:40',t:'🧱 Sigma Alvenarias apontou 30 m² de alvenaria no bloco C · 📷 2 fotos'},{h:'07:30',t:'⛅ Diário aberto: nublado, sem chuva'}],
+ bookGen:{},extraFotos:0
+};
+const L={online:true,queue:[],last:'10:15',sol:false};
+const J=()=>C.obras.rp.jornada[S.rpF];
+
+/* ---------- cálculos por obra ---------- */
+function etapas(id){const o=C.obras[id];
+ const f=id==='rp'?clone(J().fin):S.fin[id];
+ if(id==='rp'&&J().fase==='Compras'&&S.cot.st===2)f[2]=[CONFIG.cotacao.propostas[0].preco+CONFIG.cotacao.propostas[0].frete,0,0];
+ return o.etapas.map((n,i)=>({n,orc:o.orcEtapa[i],com:f[i][0],rea:f[i][1],p:f[i][2],prev:id==='rp'?null:o.prevEtapa[i]}))}
+function proj(e){return (e.p>=100||e.com>=e.orc*0.9)?Math.max(e.com,e.rea):e.orc}
+function tot(id){const E=etapas(id),s=k=>E.reduce((a,e)=>a+e[k],0);const orc=s('orc'),com=s('com'),rea=s('rea'),pr=E.reduce((a,e)=>a+proj(e),0);return {orc,com,rea,pr,dv:pr-orc,dvp:(pr-orc)/orc*100}}
+function fis(id){const E=etapas(id);if(id==='rp'&&!J().fis)return 0;return E.reduce((a,e)=>a+e.orc*e.p,0)/C.obras[id].orcado}
+function prevF(id){if(id==='rp')return J().fis?J().fis.previsto:0;const E=etapas(id);return E.reduce((a,e)=>a+e.orc*e.prev,0)/C.obras[id].orcado}
+function iFase(id){return id==='rp'?J().iFase:C.obras[id].iFase}
+function bookArr(id){return id==='rp'?J().book:C.obras[id].book.map((v,i)=>i===1&&id==='pp'?Math.min(100,v+S.extraFotos):v)}
+const bookPct=id=>Math.round(avg(bookArr(id)));
+function decs(id){return S.dec.filter(d=>d.obra===id&&(id!=='rp'||d.fase===J().fase))}
+const pendD=id=>decs(id).filter(d=>!d.done);
+function pauseOf(id){if(id==='aurora'){const p=C.obras.aurora.pausa,dd=p.desdeData;return {...p,since:new Date(dd[0],dd[1],dd[2],dd[3],dd[4])}}if(id==='pp'&&S.ppPause)return S.ppPause;return null}
+const daysP=p=>Math.floor((simNow()-p.since)/864e5);
+const occOf=id=>S.occ.filter(o=>o.obra===id);
+const nomeObra=id=>C.obras[id].cliente+' · '+C.obras[id].nome;
+
+/* ---------- utilidades ---------- */
+function gt(msg){const t=$('#gtoast');t.textContent=msg;t.classList.add('on');clearTimeout(gt.k);gt.k=setTimeout(()=>t.classList.remove('on'),3400)}
+function ptoast(msg){const t=$('#toast');t.textContent='🔔 '+msg;t.classList.add('on');clearTimeout(ptoast.k);ptoast.k=setTimeout(()=>t.classList.remove('on'),3500)}
+function feed(t){S.feed.unshift({h:hm(),t,n:1});S.feed=S.feed.slice(0,8)}
+function rt(){$$('table').forEach(t=>{t.classList.add('rt');const hs=[...t.querySelectorAll('thead th')].map(th=>th.textContent.replace('?','').trim());
+ t.querySelectorAll('tbody tr,tfoot tr').forEach(tr=>[...tr.children].forEach((td,i)=>{if(i===0&&!td.hasAttribute('data-l')){td.classList.add('first');return}if(!td.hasAttribute('data-l'))td.setAttribute('data-l',hs[i]||'')}))})}
+function devTxt(v,p){const cl=v>500?'up':v<-500?'dn':'';return `<span class="${cl}">${sgn(v,brl)}${p!==undefined?' ('+sgn(p,x=>pc(x,1))+')':''}</span>`}
+function clockTxt(p){const ms=simNow()-p.since,d=Math.floor(ms/864e5),r=ms%864e5;const h=Math.floor(r/36e5),m=Math.floor(r%36e5/6e4),s=Math.floor(r%6e4/1e3);return `${d} d ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`}
+function pauseCard(id,full){const p=pauseOf(id);if(!p)return '';const d=daysP(p);
+ const who=['Construtora','Cliente','Fornecedor','Órgão público'].map(w=>`<span class="${w===p.dep?'on':''}">${w===p.dep?'● ':''}${w}</span>`).join('');
+ return `<div class="pausecard" role="region" aria-label="Obra em pausa" data-clock="${id}">
+ <div class="row sp"><h3>⏸ Obra em pausa</h3><span class="pill p-pause">⏸ ${d?plural(d,'dia','dias')+' parada':'parada desde hoje'}</span></div>
+ <div><b>Motivo:</b> ${p.motivo}</div>
+ <div class="row" style="margin:6px 0"><span>Desde <b>${p.desde}</b> · tempo parado:</span><span class="clock">${clockTxt(p)}</span></div>
+ <div><b>De quem depende a retomada:</b></div><div class="who">${who}</div>
+ ${full?`<div><b>O que acontece nos bastidores:</b></div><ul class="tl">${p.bastidores.map(b=>`<li data-i="${b[0]}">${b[1]}</li>`).join('')}</ul>`:''}
+ <div><b>Retomada prevista:</b> ${p.retomada}</div><div><b>Impacto no prazo:</b> ${p.impacto}</div></div>`}
+function phasesHTML(i){return `<div class="phases">${C.fases.map((f,k)=>`<div class="${k<i?'done':k===i?'now':''}">${k<i?'✓ ':k===i?'● ':''}${f}</div>`).join('')}</div>`}
+function decHTML(d,mob){const cur=d.ch.find(c=>c[1]==='now');
+ return `<div class="dec${d.done?' done':''}"><div class="row sp"><b>${d.t}</b>${d.done?'<span class="pill p-good">✓ Aprovado</span>':`<span class="pill p-warn">⏳ vence ${d.due}</span>`}</div>
+ <div class="sub">${d.d}</div>
+ <div class="chain" aria-label="Cadeia de aprovação">${d.ch.map((c,i)=>(i?'→':'')+`<span class="${c[1]}">${c[1]==='done'?'✓ ':c[1]==='now'?'⏳ ':''}${c[0]}</span>`).join(' ')}</div>
+ ${d.done?'':`<div class="row"><span class="sub">Aguardando <b>${cur[0].split(' ·')[0]}</b></span><button class="btn ok sm" data-a="ok" data-id="${d.id}">✓ Aprovar como ${cur[0].split(' (')[0]}</button><button class="btn ghost sm" data-a="adj">Pedir ajuste</button></div>`}</div>`}
+
+/* ---------- financeiro (orçado × realizado) ---------- */
+function finHTML(id,client){const E=etapas(id),T=tot(id),tx=C.construtora.taxaAdm,O=occOf(id).filter(o=>o.custo>0);
+ const cob=O.filter(o=>o.cobrado).reduce((a,o)=>a+o.custo,0),nc=O.filter(o=>!o.cobrado).reduce((a,o)=>a+o.custo,0);
+ return `<div class="lay" style="margin-bottom:8px">
+ <div class="card c3 kpi"><div class="sub">Orçado ${q('Orçado (previsto): quanto a obra deveria custar, pelo orçamento aprovado.')}</div><div class="mid">${mi(T.orc)}</div></div>
+ <div class="card c3 kpi"><div class="sub">Comprometido ${q('Comprometido: pedidos e contratos já fechados, mesmo que ainda não pagos.')}</div><div class="mid">${mi(T.com)}</div></div>
+ <div class="card c3 kpi"><div class="sub">Realizado ${q('Realizado: o que já foi gasto e entrou nas notas fiscais.')}</div><div class="mid">${mi(T.rea)}</div><div class="bar money sm"><i style="width:${Math.min(100,T.rea/T.orc*100)}%"></i></div></div>
+ <div class="card c3 kpi"><div class="sub">Desvio previsto ${q('Desvio: quanto a obra deve custar a mais (+) ou a menos (−) que o orçado, considerando o que já foi contratado. Etapas ainda não contratadas contam pelo orçado.')}</div><div class="mid">${devTxt(T.dv)}</div><div class="sub">${sgn(T.dvp,x=>pc(x,1))} do orçado</div></div></div>
+ <div><table><thead><tr><th>Etapa</th><th class="n">Orçado</th><th class="n">Comprometido</th><th class="n">Realizado</th><th class="n">Desvio R$</th><th class="n">Desvio %</th></tr></thead><tbody>
+ ${E.map(e=>{const dv=proj(e)-e.orc;return `<tr><td>${e.n}</td><td class="n">${brl(e.orc)}</td><td class="n">${e.com?brl(e.com):'—'}</td><td class="n">${e.rea?brl(e.rea):'—'}</td><td class="n">${devTxt(dv)}</td><td class="n">${sgn(dv/e.orc*100,x=>pc(x,1))}</td></tr>`}).join('')}
+ </tbody><tfoot><tr><td>Total do custo da obra</td><td class="n">${brl(T.orc)}</td><td class="n">${brl(T.com)}</td><td class="n">${brl(T.rea)}</td><td class="n">${devTxt(T.dv)}</td><td class="n">${sgn(T.dvp,x=>pc(x,1))}</td></tr>
+ <tr><td>Taxa de administração ${pc(tx*100)} <span class="sub">(exemplo)</span> ${q('Taxa de administração: o valor da construtora para gerenciar a obra, calculado sozinho sobre o custo realizado.')}</td><td class="n">${brl(T.orc*tx)}</td><td class="n"></td><td class="n">${brl(T.rea*tx)}</td><td class="n"></td><td class="n"></td></tr></tfoot></table></div>
+ ${O.length?`<h4>Custos de ocorrências ${q('Retrabalhos, sinistros e não conformidades têm custo. Aqui fica claro quem paga e se o valor foi cobrado de você.')}</h4>
+ <div><table><thead><tr><th>Registro</th><th class="n">Custo</th><th>Quem paga</th><th>Cobrado de você?</th></tr></thead><tbody>${O.map(o=>`<tr><td>${C.tipos[o.tipo][0]} ${o.id} · ${o.t}</td><td class="n">${brl(o.custo)}</td><td>${o.paga}</td><td>${o.cobrado?'<span class="pill p-warn">Sim · aditivo aprovado</span>':'<span class="pill p-good">✓ Não</span>'}</td></tr>`).join('')}</tbody></table></div>
+ <div class="who-pays">✓ <b>Cobrado de você: ${brl(cob)}</b> · não cobrado de você: ${brl(nc)} (pago por fornecedor, seguro ou construtora)</div>`:''}
+ ${client?`<div class="alert a-info">🔒 O nível de detalhe é definido no contrato. Padrão: resumo por etapa e as compras que você aprova.</div>`:''}`}
+
+/* ---------- visão do cliente ---------- */
+function curObra(){return S.sel[S.persona]}
+function clientPhrase(id){const n=pendD(id).length,dd=n?` · ${plural(n,'decisão sua','decisões suas')}`:' · nada pendente com você';
+ if(id==='rp'){if(J().fase==='Compras')return S.cot.st===2?'✓ Estrutura pré-moldada aprovada · pedido emitido':J().frase;return J().frase+dd}
+ const p=pauseOf(id);if(p){const d=daysP(p);return `⏸ ${d?'Obra em pausa há '+plural(d,'dia','dias'):'Obra parada hoje'} · retomada prevista ${p.retomada}`+dd}
+ if(id==='atlas')return C.obras.atlas.frase+dd;
+ const df=prevF(id)-fis(id);return (df>1?`⚠ ${Math.round(df)} pontos atrás do previsto, sem impacto na entrega de ${C.obras[id].entregaPrev}`:`✓ No prazo · entrega prevista ${C.obras[id].entregaPrev}`)+dd}
+function renderCliente(){
+ const id=curObra(),o=C.obras[id],cl=C.clientes.find(c=>c.id===S.persona);
+ $('#persona').innerHTML='<span class="sub" style="align-self:center">Entrar como:</span>'+C.clientes.map(c=>`<button data-a="persona" data-id="${c.id}" aria-pressed="${c.id===S.persona}"><span class="av">${c.curto[0]}</span><span><b>${c.nome}</b><br><span class="sub">${c.empresa}</span></span></button>`).join('');
+ $('#cObras').innerHTML=cl.obras.length>1?`<h2>Minhas obras</h2><div class="obras">${cl.obras.map(k=>{const p=pauseOf(k),df=prevF(k)-fis(k);const st=p?['pause','⏸ Em pausa']:df>1?['warn','⚠ Atenção']:['good','✓ No prazo'];return `<button class="obra" data-a="obra" data-id="${k}" aria-pressed="${k===id}"><div class="row sp"><b>${C.obras[k].cliente}</b><span class="pill p-${st[0]}">${st[1]}</span></div><div class="sub">${C.obras[k].nome} · ${C.obras[k].area.toLocaleString('pt-BR')} m² · ${C.obras[k].cidade}</div><div class="bar sm"><i style="width:${fis(k)}%"></i></div><div class="sub">${pc(fis(k))} pronta · ${plural(pendD(k).length,'decisão sua','decisões suas')}</div></button>`}).join('')}</div>`:'';
+ $('#cJornada').innerHTML=id==='rp'?`<div class="jsel" role="group" aria-label="Ver a obra em"><b>Ver a obra em:</b>${o.jornada.map((j,i)=>`<button data-a="fase" data-i="${i}" aria-pressed="${i===S.rpF}">${j.fase}</button>`).join('')}<span class="sub">simulação · ${J().quando}</span></div>`:'';
+ $('#cObraT').innerHTML=`<b>${o.cliente}</b> · ${o.nome}, ${o.area.toLocaleString('pt-BR')} m² · ${o.cidade} · ${o.eng}`;
+ const sub=id==='rp'?J().sub:pauseOf(id)?'A obra está parada, mas a equipe segue trabalhando para a retomada.':`Ritmo: ${pc(fis(id))} pronta; o previsto para hoje era ${pc(prevF(id))}. ${q('Ritmo da obra: compara o quanto já foi feito com o que estava planejado para hoje. Pequenas diferenças são recuperadas pela folga do cronograma.')}`;
+ $('#cAnswer').innerHTML=clientPhrase(id)+`<small>${sub}</small>`;
+ $('#cPhases').innerHTML=phasesHTML(iFase(id));
+ $('#cPause').innerHTML=pauseCard(id,true);
+ $('#cStage').innerHTML=stageHTML(id);
+ const T=tot(id),pre=id==='rp'&&!J().fis;
+ $('#kFis').innerHTML=pre?`<div class="sub">📐 Avanço da fase de projeto ${q('Antes da obra começar, o avanço é o das entregas de projeto e das aprovações.')}</div><div class="big">${pc(etapas('rp')[0].p)}</div><div class="bar"><i style="width:${etapas('rp')[0].p}%"></i></div><div class="sub">projetos e aprovações</div>`:
+  `<div class="sub">🏗️ Obra pronta <b>(% físico)</b> ${q('% físico: quanto da obra já foi construído, pesado pelo valor de cada etapa. A marca preta mostra onde deveríamos estar hoje.')}</div><div class="big">${pc(fis(id))}</div><div class="bar" role="img" aria-label="Obra pronta ${pc(fis(id))}, previsto ${pc(prevF(id))}"><i style="width:${fis(id)}%"></i><span class="mk" style="left:${prevF(id)}%"></span></div><div class="sub">▮ marca preta = previsto para hoje (${pc(prevF(id))})</div>`;
+ $('#kFin').innerHTML=`<div class="sub">💰 Orçado × realizado ${q('Realizado: o que já foi gasto. Comprometido: o que já foi contratado. Desvio: diferença prevista contra o orçado.')}</div><div class="big">${mi(T.rea)}</div><div class="bar money" role="img" aria-label="Realizado"><i style="width:${Math.min(100,T.rea/T.orc*100)}%"></i></div><div class="sub">de ${mi(T.orc)} orçados · comprometido ${mi(T.com)}</div><div class="sub">Desvio: ${devTxt(T.dv,T.dvp)}</div>`;
+ const n=pendD(id).length;
+ $('#kDec').innerHTML=`<div class="sub">✋ Decisões suas</div><div class="big">${n}</div><div class="sub">${n?'a mais urgente vence '+pendD(id)[0].due:'nada pendente ✓'}</div><div class="sub">${C.alcadas[id]}</div>`;
+ $('#sDecS').textContent=n?`${n} aguardando você`:'tudo aprovado ✓';
+ $('#cDec').innerHTML=(decs(id).length?decs(id).map(d=>decHTML(d)).join(''):'<p class="sub">Nenhuma decisão nesta fase.</p>')+`<p class="sub">🔐 Alçadas: ${C.alcadas[id]}</p>`;
+ $('#sFinS').textContent=`${mi(T.rea)} de ${mi(T.orc)} · desvio ${sgn(T.dvp,x=>pc(x,1))}`;
+ $('#cFin').innerHTML=finHTML(id,true);
+ const E=etapas(id);
+ $('#sCroS').textContent=`${E.filter(e=>e.p>=100).length} de ${E.length} etapas concluídas`;
+ $('#cCro').innerHTML=E.map(e=>`<div style="margin:6px 0"><div class="row sp"><span>${e.n}</span><b>${e.p>=100?'✓ 100%':e.p+'%'}</b></div><div class="bar sm"><i style="width:${e.p}%"></i>${e.prev!=null?`<span class="mk" style="left:${e.prev}%;height:20px;top:-5px"></span>`:''}</div></div>`).join('')+(id!=='rp'?'<p class="sub">▮ marca preta = previsto para hoje. O avanço sai dos apontamentos das equipes no diário de obra.</p>':'');
+ const O=occOf(id);
+ $('#sOccS').textContent=O.length?`${O.filter(o=>o.passo<4).length} em andamento · ${O.filter(o=>o.passo===4).length} encerradas`:'nenhuma';
+ $('#cOcc').innerHTML=O.length?O.map(o=>occClientHTML(o)).join(''):'<p class="sub">Nenhuma ocorrência registrada nesta obra.</p>';
+ const SP=C.fornecedores.filter(f=>f.obras.includes(id));
+ $('#sSupS').textContent=`${SP.length} fornecedores cotados ou contratados`;
+ $('#cSup').innerHTML=`<p class="sub">Aparecem só os fornecedores cotados ou contratados para a sua obra, com a nota e os critérios. ${q('A nota vem das avaliações de quem acompanhou cada entrega: de 1 a 5 estrelas em prazo, qualidade, preço, atendimento e pós-venda.')}</p>`+SP.map(f=>supClientHTML(f,id)).join('');
+ $('#sBookS').textContent=`book ${bookPct(id)}% completo`;
+ $('#cBook').innerHTML=bookHTML(id,true);
+ const M=id==='rp'?J().med:o.med,A=C.aditivos[id]||[];const MST=[['📝','em preparação'],['👀','em análise'],['✓','aprovada'],['💰','paga']];const tx=C.construtora.taxaAdm;
+ $('#sMedS').textContent=`${M.length} medições · ${A.length} aditivo(s)`;
+ $('#cMed').innerHTML=`<h4>Reembolsos mensais (medições) ${q('Medição: o fechamento mensal do que foi gasto. Vira o pedido de reembolso do custo mais a taxa.')}</h4>`+M.map(m=>`<div class="dec"><div class="row sp"><b>${m[0]} · ${m[1]}</b><span class="pill ${['p-gray','p-warn','p-good','p-good'][m[3]]}">${MST[m[3]].join(' ')}</span></div><div class="sub">custo ${brl(m[2])} + taxa ${brl(m[2]*tx)} = <b>${brl(m[2]*(1+tx))}</b></div><div class="steps" aria-hidden="true">${MST.map((_,i)=>`<i class="${i<m[3]?'on':i===m[3]?'cur':''}"></i>`).join('')}</div></div>`).join('')+
+  `<h4>Aditivos ${q('Aditivo: mudança no contrato (escopo, valor ou prazo), que precisa da sua aprovação.')}</h4>`+(A.length?A.map(a=>`<div class="dec"><div class="row sp"><b>${a[0]} · ${a[1]}</b>${a[4]==='ok'||(id==='rp'&&S.dec.find(d=>d.id==='rp-ad1').done)?'<span class="pill p-good">✓ aprovado</span>':'<span class="pill p-warn">⏳ aguardando você</span>'}</div><div class="sub">+ ${brl(a[2])} · prazo ${a[3]}</div></div>`).join(''):'<p class="sub">Nenhum aditivo.</p>');
+}
+function stageHTML(id){
+ if(id==='rp'){const j=J();
+  if(j.entregas)return `<div class="card" style="margin-top:12px"><h3>📐 Entregas de projeto</h3>${j.entregas.map(e=>`<div style="margin:6px 0"><div class="row sp"><span>${e[0]}</span><b>${e[1]===100?'✓ 100%':e[1]+'%'}</b></div><div class="bar sm ${e[1]===100?'green':''}"><i style="width:${e[1]}%"></i></div></div>`).join('')}<p class="sub">Cada projeto entregue vai sozinho para o book de obra (capítulo "Projetos e as-built").</p></div>`;
+  if(j.aprov)return `<div class="card" style="margin-top:12px"><h3>🏛️ Aprovações (prefeitura, bombeiros e outros)</h3>${j.aprov.map(a=>`<div class="row sp" style="border-bottom:1px solid var(--line);padding:6px 0"><span>${a[0]}</span><span class="pill ${a[1]==='ok'?'p-good':a[1]==='now'?'p-warn':'p-gray'}">${a[1]==='ok'?'✓ ':a[1]==='now'?'⏳ ':'— '}${a[2]}</span></div>`).join('')}</div>`;
+  if(j.compat)return `<div class="card" style="margin-top:12px"><h3>🧩 Compatibilização dos projetos ${q('Compatibilização: conferir e ajustar os projetos entre si (estrutura, elétrica, incêndio…) antes de comprar, para não comprar errado ou em dobro.')}</h3><div class="row"><span class="pill p-info">${j.compat.achadas} ajustes encontrados</span><span class="pill p-good">✓ ${j.compat.resolvidas} resolvidos</span><span class="pill p-warn">⏳ ${j.compat.achadas-j.compat.resolvidas} em solução</span></div><ul class="tl">${j.compat.abertas.map(a=>`<li data-i="⏳">${a}</li>`).join('')}</ul><div class="alert a-info">🔒 As compras ficam seguras até a compatibilização terminar.</div></div>`;
+  if(j.fase==='Compras')return `<div class="card" style="margin-top:12px">${mapHTML(true)}</div>`;
+  if(j.entrega)return `<div class="card" style="margin-top:12px"><h3>🏁 Entrega da obra</h3>${j.entrega.map(a=>`<div class="row sp" style="border-bottom:1px solid var(--line);padding:6px 0"><span>${a[0]}</span><span class="pill ${a[1]==='now'?'p-warn':'p-gray'}">${a[1]==='now'?'⏳ ':'○ '}${a[2]}</span></div>`).join('')}</div>`;
+  return `<div class="card" style="margin-top:12px"><h3>📒 Hoje na obra <span class="sub">(diário publicado pelo engenheiro)</span></h3><ul class="tl"><li data-i="☀️">Tempo bom · 26 pessoas · 4 equipes</li><li data-i="🏗️">Pré-Moldados Alfa: montagem das terças do eixo D · 📷 4 fotos</li><li data-i="🧱">Cobertura: 120 m² de telhas instaladas · 📷 3 fotos</li><li data-i="⚡">Delta Elétrica: eletrocalhas da doca 1</li></ul></div>`}
+ if(id==='pp')return `<div class="card" style="margin-top:12px"><h3>📒 Diário de hoje <span class="sub">(${S.signed?'assinado pelo engenheiro':'em montagem · o engenheiro revisa e assina no fim do dia'})</span></h3>${diaryClient()}</div>`;
+ if(id==='atlas')return `<div class="card" style="margin-top:12px"><h3>🏁 Entrega da obra</h3><div class="row sp" style="border-bottom:1px solid var(--line);padding:6px 0"><span>Vistoria final com você</span><span class="pill p-warn">⏳ 19/11 às 10h</span></div><div class="row sp" style="border-bottom:1px solid var(--line);padding:6px 0"><span>Pendências da vistoria prévia</span><span class="pill p-good">✓ 6 de 6 resolvidas</span></div><div class="row sp" style="padding:6px 0"><span>Book de obra</span><span class="pill p-warn">${bookPct('atlas')}% · faltam ${C.obras.atlas.bookFalta.length} itens</span></div></div>`;
+ return ''}
+function occClientHTML(o){const t=C.tipos[o.tipo];
+ return `<div class="occ"><div class="row sp"><b>${t[0]} ${t[1]} · ${o.id} · ${o.t}</b><span class="pill ${o.passo===4?'p-good':'p-warn'}">${C.caminho[o.passo]}</span></div>
+ <div class="sub">${o.local} · aberto em ${o.data} · impacto: ${o.impacto}</div>
+ <div class="flow">${C.caminho.map((c,i)=>`<span class="${i<o.passo?'done':i===o.passo?'now':''}">${i<o.passo?'✓ ':''}${c}</span>`).join('')}</div>
+ ${o.tipo==='rnc'?`<div><b>O que está sendo feito:</b> ${o.corretiva}</div>`:''}
+ ${o.tipo==='sin'?`<div><b>Seguro acionado:</b> ${o.seguradora} · sinistro ${o.nSin} · prejuízo ${brl(o.prejuizo)} · ressarcimento previsto ${brl(o.ressarc)}</div>`:''}
+ ${o.tipo==='ret'?`<div><b>O que foi refeito:</b> ${o.refeito}</div>`:''}
+ ${o.custo?`<div class="who-pays ${o.cobrado?'charged':''}">${o.cobrado?'🧾 <b>Cobrado de você</b>':'✓ <b>Não foi cobrado de você</b>'} · custo ${brl(o.custo)} · quem paga: ${o.paga}</div>`:''}
+ ${o.tipo==='rnc'?`<button class="btn ghost sm" data-a="rnc" data-id="${o.id}" data-cli="1">📄 Ver relatório de não conformidade</button>`:''}</div>`}
+function critHTML(f){return C.criterios.map((c,i)=>`<div class="crit"><span>${c[1]}</span><div class="bar sm"><i style="width:${f.notas[i]/5*100}%;background:#8a5a00"></i></div><b>${n1(f.notas[i])}</b></div>`).join('')}
+function supClientHTML(f,id){const h=f.hist.find(x=>x[0]===id);
+ return `<div class="occ"><div class="row sp"><b>${f.n}</b><span>${starsTxt(f)}</span></div><div class="sub">${f.cat} · ${h?h[1]+' · '+h[2]:''} · ${f.rec}% recomendariam</div>${critHTML(f)}</div>`}
+</script>
+<script>
+/* ---------- mapa de cotação (cliente e interno) ---------- */
+function cotRows(){const cf=C.cotacao,P=cf.propostas.map(p=>({...p,s:sup(p.f),tot:p.preco+p.frete}));const mn=Math.min(...P.map(p=>p.tot));
+ P.forEach(p=>{p.vs=(p.tot-mn)/mn*100;p.idx=(nota(p.s)/5*cf.pesoNota+mn/p.tot*cf.pesoPreco)*100});const b=P.reduce((a,p)=>p.idx>a.idx?p:a,P[0]);P.forEach(p=>p.best=p===b);return {P,b,mn}}
+function mapHTML(client){const {P,b,mn}=cotRows(),cheap=P.find(p=>p.tot===mn),d=S.dec.find(x=>x.id==='rp-pm');
+ const rows=P.map(p=>{const cl=p.best?' class="best"':'';return `<tr><td${cl}><b>${p.s.n}</b>${p.best?'<br><span class="pill p-good">★ Melhor custo-benefício</span>':''}</td><td${cl}>${starsTxt(p.s)}</td><td class="n"${cl}>${brl(p.preco)}</td><td${cl}>${p.freteTxt}</td><td class="n"${cl}><b>${brl(p.tot)}</b></td><td class="n"${cl}>${p.vs<0.05?'menor preço':'+'+pc(p.vs,1)}</td><td${cl}>${p.prazo}</td><td${cl}>${p.cond}</td><td class="n"${cl}>${Math.round(p.idx)}</td></tr>`}).join('');
+ let act='';
+ if(client){act=d?decHTML(d):''}
+ else if(S.cot.st===0)act=`<button class="btn" data-a="sendCot">✋ Enviar a recomendação para aprovação da Marina</button>`;
+ else if(S.cot.st===1)act=`<div class="alert a-warn">✋ Enviado. <b>Aguardando ${d.ch.find(c=>c[1]==='now')[0]}</b>. ${C.alcadas.rp}</div><button class="btn ghost" data-a="goCliRp">👤 Ver na visão da Marina</button>`;
+ else act=`<div class="alert a-good">📄 Pedido <b>PC-0231</b> emitido para ${b.s.n}. O valor entrou no comprometido da obra e a avaliação do fornecedor fica liberada depois da entrega.</div>`;
+ return `<div class="row sp"><h3>📊 Mapa de cotação · ${C.cotacao.item}</h3><span class="sub">Portalux Esquadrias · galpão 2.000 m²</span></div>
+ <div><table class="qmap"><thead><tr><th>Fornecedor</th><th>Nota</th><th class="n">Preço</th><th>Frete</th><th class="n">Total</th><th class="n">Diferença</th><th>Prazo</th><th>Condições</th><th class="n">Custo-benefício ${q('Índice de 0 a 100 que junta a nota (60%) e o preço total (40%). É uma sugestão do sistema: a equipe recomenda e o cliente decide.')}</th></tr></thead><tbody>${rows}</tbody></table></div>
+ <div class="alert a-info">★ <b>Sugestão: ${b.s.n}.</b> Custa ${pc(b.vs,1)} a mais que o menor total (${cheap.s.n}), mas tem nota ${n1(nota(b.s))} contra ${n1(nota(cheap.s))}, com melhor prazo e pós-venda. A decisão é humana: a equipe recomenda e ${client?'você aprova':'o cliente aprova'}.</div>
+ ${client?'':`<h4>💬 Comentários internos <span class="itag">não aparecem para o cliente</span></h4>${P.map(p=>p.s.coment.map(c=>`<div class="cmt"><b>${p.s.n}:</b> ${c}</div>`).join('')).join('')}`}
+ <div style="margin-top:8px">${act}</div>`}
+function sendCot(silent){if(S.cot.st>0)return;S.cot.st=1;const {b}=cotRows();
+ S.dec.push({id:'rp-pm',obra:'rp',fase:'Compras',t:'Compra · Estrutura pré-moldada · '+b.s.n,d:brl(b.tot)+' com frete · nota '+n1(nota(b.s))+' ★ · melhor custo-benefício',due:'08/04',ch:[['Eng. Marcos (construtora) · recomendou','done'],['Marina (Portalux Esquadrias) · até R$ 200 mil','now'],['Diretoria da Portalux Esquadrias (acima de R$ 200 mil)','']]});
+ if(!silent)gt('✋ Enviado. A Marina recebe no celular e no painel.')}
+
+/* ---------- diário de obra (campo) ---------- */
+const TST={todo:['📋','A executar'],exec:['🔨','Em execução'],done:['✅','Executadas'],imp:['⛔','Impedidas']};
+const task=id=>S.D.tarefas.find(t=>t.id===id);
+const fmtQ=(v,u)=>(Math.round(v*10)/10).toLocaleString('pt-BR')+' '+u;
+function send(op){if(L.online){apply(op);L.last=hm()}else{op.h=hm();L.queue.push(op)}render()}
+function addProg(t,qtd){const before=t.exec;t.exec=Math.min(t.prev,t.exec+qtd);const real=t.exec-before;const f=S.fin.pp[t.et];f[2]=Math.min(100,f[2]+real/t.prev*t.peso*100);if(t.exec>=t.prev)t.st='done';else if(t.st==='todo')t.st='exec';return real}
+function apply(op){
+ if(op.t==='ap'){const t=task(op.ap.tid);addProg(t,op.ap.qtd);S.D.apontamentos.push({...op.ap,h:op.h||hm()});S.extraFotos+=op.ap.fotos;
+  feed(`📏 ${op.ap.emp} apontou ${fmtQ(op.ap.qtd,t.u)} · ${t.n}${op.ap.fotos?' · 📷 '+op.ap.fotos+' foto(s)':''}`);ptoast(`${t.n}: ${Math.round(t.exec/t.prev*100)}% executado`)}
+ if(op.t==='voz'){const a1={tid:'t1',emp:'Ômega Pisos',pes:6,hrs:8,qtd:120,fotos:2,obs:'Nivelamento conferido'},a2={tid:'t5',emp:'Zeta Esquadrias',pes:2,hrs:4,qtd:18,fotos:1,obs:''};
+  [a1,a2].forEach(a=>{addProg(task(a.tid),a.qtd);S.D.apontamentos.push({...a,h:op.h||hm(),voz:1})});S.extraFotos+=3;
+  S.D.extra.push({h:op.h||hm(),t:'🎙️ Diário ditado e organizado pela IA: 2 apontamentos, 1 ocorrência atualizada (OC-015)'});
+  feed('🎙️ Diário atualizado: contrapiso do bloco B +120 m² · esquadrias 18 vãos conferidos · 📷 3 fotos');ptoast('Novo apontamento: a obra avançou hoje')}
+ if(op.t==='foto'){S.extraFotos+=1;S.D.extra.push({h:op.h||hm(),t:'📷 Foto de evidência · contrapiso do bloco B (vai para o book, capítulo 2)'});feed('📷 Nova foto do contrapiso do bloco B')}
+ if(op.t==='pause'){if(!S.ppPause)S.ppPause={motivo:op.motivo,dep:op.dep,since:simNow(),desde:'hoje, 12/11',bastidores:[['⏳','Equipe registrou a parada hoje pelo app de campo; o gestor detalha os bastidores ainda hoje']],retomada:'a confirmar pelo gestor ainda hoje',impacto:'em avaliação pelo gestor'};
+  S.D.extra.push({h:op.h||hm(),t:'⏸ Dia parado · '+op.motivo+' · depende de: '+op.dep,pz:1});feed('⏸ Obra parada hoje: '+op.motivo);ptoast('A obra está parada hoje. Veja o motivo.')}
+ if(op.t==='st'){const t=task(op.id);if(op.v==='done'){addProg(t,t.prev-t.exec);t.st='done'}else{t.st=op.v;if(op.v==='imp')t.motivo=op.motivo;}
+  S.D.extra.push({h:op.h||hm(),t:`${TST[t.st][0]} ${t.n}: ${TST[t.st][1].toLowerCase().replace(/s$/,'')}${op.v==='imp'?' · '+op.motivo:''}`});feed(`${TST[t.st][0]} ${t.n}: ${TST[t.st][1].toLowerCase().replace(/s$/,'')}`)}
+}
+function flush(){if(!L.online||!L.queue.length)return;const n=L.queue.length;L.queue.splice(0).forEach(apply);L.last=hm();render();gt(`📶 Sinal voltou: ${n} registro(s) enviados`)}
+function efetivo(){const byEmp={};S.D.apontamentos.forEach(a=>{byEmp[a.emp]=Math.max(byEmp[a.emp]||0,a.pes)});return {p:S.D.efetivoBase+Object.values(byEmp).reduce((x,y)=>x+y,0),e:Object.keys(byEmp).length+1}}
+function diaryItems(client){const D=S.D,ef=efetivo(),T=D.tarefas,c=k=>T.filter(t=>t.st===k);
+ const qd=client?[]:L.queue.map(o=>({h:o.h,t:o.t==='ap'?`📏 ${o.ap.emp} · ${fmtQ(o.ap.qtd,task(o.ap.tid).u)}`:o.t==='voz'?'🎙️ Diário ditado':o.t==='foto'?'📷 Foto':o.t==='pause'?'⏸ Dia parado':'Tarefa atualizada',q:1}));
+ const it=[
+  {i:'🌤️',t:`<b>Clima:</b> ${D.clima}`},
+  {i:'👷',t:`<b>Efetivo:</b> ${ef.p} pessoas · ${ef.e} equipes`},
+  {i:'✅',t:`<b>Tarefas:</b> ${c('done').length} executadas · ${c('exec').length} em execução · ${c('todo').length} a executar · ${c('imp').length} impedida(s)${c('imp').length?' ('+c('imp').map(t=>t.n+': '+t.motivo).join('; ')+')':''}`},
+  ...D.apontamentos.map(a=>{const t=task(a.tid);return {i:'📏',t:`<b>${a.h} · ${a.emp}</b> · ${client?'':a.pes+' pessoas · '+a.hrs+' h · '}${fmtQ(a.qtd,t.u)} · ${t.n}${a.fotos?' · 📷 '+a.fotos:''}${!client&&a.obs?' · <i>'+a.obs+'</i>':''}${a.voz?' <span class="tag">por voz</span>':''}`}}),
+  {i:'⚠️',t:`<b>Ocorrências:</b> ${S.occ.filter(o=>o.obra==='pp'&&o.data==='12/11').map(o=>o.id+' · '+o.t).join('; ')||'nenhuma'}`},
+  ...D.entregas.map(e=>({i:'🚚',t:e.replace(/^\S+\s/,'')})),
+  ...D.visitas.map(v=>({i:'👤',t:v.replace(/^\S+\s/,'')})),
+  ...D.extra.map(x=>({i:'•',t:`<b>${x.h}</b> · ${x.t}`,pz:x.pz})),
+  ...qd.map(x=>({i:'📦',t:`<b>${x.h}</b> · ${x.t} <span class="sub">na fila</span>`}))];
+ return it}
+function diaryClient(){return `<ul class="diary">${diaryItems(true).map(x=>`<li class="${x.pz?'pz':''}">${x.i} ${x.t}</li>`).join('')}</ul>`}
+function renderCampo(){const D=S.D;
+ $('#fCtx').textContent=D.eng+' · Colégio Horizonte';$('#fTit').textContent='Diário de '+D.data;
+ $('#netbar').className='netbar '+(L.online?'on':'off');
+ $('#netbar').innerHTML=(L.online?'<b>● Online</b>':'<b>○ Sem sinal</b>')+` · <span>${L.queue.length} na fila</span> · <span>último envio ${L.last}</span>${L.online?'':' · 📦 tudo fica salvo no celular e envia sozinho'}`;
+ $('#simNet').textContent=L.online?'🧪 simular sem sinal':'🧪 simular: sinal voltou';$('#simNet').setAttribute('aria-pressed',String(!L.online));
+ $('#fPauseBox').innerHTML=S.ppPause?`<div class="alert a-pause">⏸ Obra marcada como <b>parada hoje</b>. O cliente vê o motivo. <button class="btn sm" data-a="retomar">▶ Retomar</button></div>`:'';
+ $('#tTabs').innerHTML=Object.entries(TST).map(([k,v])=>`<button data-a="ttab" data-id="${k}" aria-pressed="${k===S.tTab}">${v[0]} ${v[1]}<br><b>${D.tarefas.filter(t=>t.st===k).length}</b></button>`).join('');
+ const TT=D.tarefas.filter(t=>t.st===S.tTab);
+ $('#fTasks').innerHTML=TT.length?TT.map(t=>{const p=Math.round(t.exec/t.prev*100);return `<div class="task ${t.st==='imp'?'imp':''}"><div class="row sp"><b>${t.n}</b><span class="sub">${t.eq}</span></div>
+  <div class="sub">${fmtQ(t.exec,t.u)} de ${fmtQ(t.prev,t.u)} · ${p}%${t.st==='todo'?' · previsto para hoje (cronograma)':''}</div><div class="bar sm ${t.st==='done'?'green':''}"><i style="width:${p}%"></i></div>
+  ${t.st==='imp'?`<div><b>Motivo:</b> ${t.motivo}</div>`:''}
+  ${S.impT===t.id?`<div style="margin-top:6px"><label for="impMot">Motivo do impedimento</label><select id="impMot" style="width:100%;margin:4px 0">${['Falta de material','Chuva','Aguardando liberação de frente','Aguardando decisão do cliente','Equipe não compareceu'].map(m=>`<option>${m}</option>`).join('')}</select><button class="btn" data-a="impOk" data-id="${t.id}" style="width:100%">Registrar impedimento</button></div>`:''}
+  <div class="acts">${t.st==='todo'?`<button class="btn" data-a="tStart" data-id="${t.id}">▶ Iniciar</button>`:''}${t.st==='exec'||t.st==='todo'?`<button class="btn ${t.st==='exec'?'':'ghost'}" data-a="apOpen" data-id="${t.id}">＋ Apontar</button>`:''}${t.st==='exec'?`<button class="btn ok" data-a="tDone" data-id="${t.id}">✓ Concluir</button>`:''}${t.st==='todo'||t.st==='exec'?`<button class="btn ghost" data-a="tImp" data-id="${t.id}">⛔ Impedir</button>`:''}${t.st==='imp'?`<button class="btn ghost" data-a="tFree" data-id="${t.id}">↺ Liberar</button>`:''}</div></div>`}).join(''):'<p class="sub">Nenhuma tarefa nesta situação.</p>';
+ const f=$('#apForm');if(S.ap){const t=task(S.ap.tid),a=S.ap;f.hidden=false;
+  f.innerHTML=`<b>📏 Apontamento · ${t.n}</b>
+  <div style="margin:6px 0"><label for="apEmp">Empresa ou equipe</label><select id="apEmp" style="width:100%">${D.equipes.map(e=>`<option${e===a.emp?' selected':''}>${e}</option>`).join('')}</select></div>
+  ${[['pes','👷 Pessoas',1,''],['hrs','⏱️ Horas',1,' h'],['qtd','📏 Executado',t.u==='un.'||t.u==='m³'?1:10,' '+t.u]].map(x=>`<div class="stp"><span style="flex:1">${x[1]}</span><button class="pm" data-a="apStep" data-k="${x[0]}" data-v="-${x[2]}" aria-label="Diminuir ${x[1]}">−</button><b>${a[x[0]]}${x[3]}</b><button class="pm" data-a="apStep" data-k="${x[0]}" data-v="${x[2]}" aria-label="Aumentar ${x[1]}">+</button></div>`).join('')}
+  <div class="row" style="margin:6px 0"><button class="btn ghost" data-a="apFoto">📷 Foto (${a.fotos})</button><span class="sub">vai para o book</span></div>
+  <label for="apObs">Observação</label><input id="apObs" value="${a.obs}" style="width:100%;min-height:48px;border:1px solid #9c9a92;border-radius:10px;padding:6px 10px;margin:4px 0" placeholder="opcional">
+  <div class="row"><button class="btn ok" data-a="apSave" style="flex:1;min-height:52px">✓ Salvar apontamento</button><button class="btn ghost" data-a="apCancel" style="min-height:52px">Cancelar</button></div>
+  <div class="sub">Avanço da tarefa depois de salvar: ${Math.round(Math.min(t.prev,t.exec+a.qtd)/t.prev*100)}%</div>`}else f.hidden=true;
+ $('#fDiary').innerHTML=`<ul class="diary">${diaryItems(false).map(x=>`<li class="${x.pz?'pz':''}">${x.i} ${x.t}</li>`).join('')}</ul>
+  ${S.signed?`<div class="alert a-good">✍️ Diário revisado e assinado por ${D.eng} às ${S.signed}. O cliente vê a versão dele.</div>`:`<button class="fb" data-a="sign">✍️ Revisar e assinar o diário</button>`}`;
+ $('#mPause').innerHTML=pauseCard('pp',false);
+ $('#mAnswer').textContent=clientPhrase('pp');
+ const r=fis('pp'),T=tot('pp');
+ $('#mBars').innerHTML=`<div class="sub">🏗️ Obra pronta (% físico): <b>${pc(r)}</b></div><div class="bar"><i style="width:${r}%"></i><span class="mk" style="left:${prevF('pp')}%"></span></div><div class="sub">💰 Realizado: <b>${mi(T.rea)}</b> de ${mi(T.orc)}</div><div class="bar money"><i style="width:${T.rea/T.orc*100}%"></i></div>`;
+ $('#mDiary').innerHTML=diaryClient();
+ $('#mFeed').innerHTML=S.feed.map(x=>`<li class="${x.n?'new':''}"><b>${x.h}</b> · ${x.t}</li>`).join('');S.feed.forEach(x=>x.n=0);
+}
+function voz(){const v=$('#voice');v.hidden=false;const txt='"Hoje nublado. A Ômega fez 120 metros quadrados de contrapiso no bloco B, com 6 pessoas em 8 horas. A Zeta conferiu 18 vãos de esquadria no bloco A. Os blocos cerâmicos ainda não chegaram."';
+ let i=0;v.innerHTML='<b>🎙️ Ouvindo…</b><p id="vTx"></p>';clearInterval(voz.k);
+ voz.k=setInterval(()=>{i+=8;$('#vTx').textContent=txt.slice(0,i);if(i>=txt.length){clearInterval(voz.k);
+  v.innerHTML=`<b>✨ A IA organizou o seu diário</b> <span class="tag">confira antes de publicar</span><ul style="padding-left:18px;margin:6px 0"><li>📏 Ômega Pisos · 6 pessoas · 8 h · 120 m² · Contrapiso bloco B</li><li>📏 Zeta Esquadrias · 2 pessoas · 4 h · 18 un. · Esquadrias bloco A (tarefa iniciada)</li><li>⚠️ OC-015 atraso de blocos: continua aberta</li><li>🌤️ Clima: nublado</li></ul><div class="row"><button class="btn ok" id="vOk" data-a="vOk" style="min-height:52px">✓ Publicar</button><button class="btn ghost" data-a="vNo" style="min-height:52px">✎ Corrigir</button></div>`}},50)}
+function pForm(){const f=$('#pForm');f.hidden=!f.hidden;if(f.hidden)return;
+ f.innerHTML=`<b>⏸ Hoje a obra está parada</b><label for="pMot" style="display:block;margin:8px 0 4px">Motivo</label><select id="pMot" style="width:100%;min-height:52px">${['Chuva forte','Falta de material','Falta de energia','Aguardando decisão do cliente','Aguardando liberação de órgão público'].map(m=>`<option>${m}</option>`).join('')}</select>
+ <div style="margin:8px 0 4px">Depende de</div><div class="row" id="pDep">${['Construtora','Cliente','Fornecedor','Órgão público'].map((w,i)=>`<button class="btn ${i?'ghost':''} sm" data-a="dep" data-w="${w}" aria-pressed="${!i}">${w}</button>`).join('')}</div>
+ <button class="btn" data-a="pSend" style="width:100%;min-height:56px;margin-top:10px">Registrar dia parado</button>`}
+
+/* ---------- ocorrências ---------- */
+function wallSVG(ok){let s=`<svg class="chart" viewBox="0 0 300 180" role="img" aria-label="${ok?'Parede refeita no prumo':'Parede fora de prumo'}"><rect width="300" height="180" fill="${ok?'#eef6f0':'#f7efe9'}"/><g transform="${ok?'':'skewX(-4) translate(8 0)'}">`;
+ for(let r=0;r<8;r++)for(let c=-1;c<6;c++){const x=40+c*44+(r%2?22:0);if(x<30||x>230)continue;s+=`<rect x="${x}" y="${20+r*18}" width="40" height="15" rx="2" fill="#c8775a" stroke="#8d4b33"/>`}
+ s+=`</g><line x1="150" y1="10" x2="150" y2="170" stroke="${ok?'#0b6b2e':'#a51d1d'}" stroke-width="3" stroke-dasharray="6 4"/><circle cx="150" cy="170" r="5" fill="${ok?'#0b6b2e':'#a51d1d'}"/></svg>`;return s}
+function rncPDF(o,cli){const f=sup(o.forn);
+ const rows=[['Obra',nomeObra(o.obra)],['Local',o.local],['Etapa',o.etapa],['Data de abertura',o.data],['Gravidade',o.grav],['Responsável',o.resp],['Fornecedor envolvido',f?f.n:'—'],['Requisito não atendido',o.req],['Constatação',o.fato],...(cli?[]:[['Causa (análise interna)',o.causa]]),['Ação imediata',o.imediata],['Ação corretiva',o.corretiva],['Verificação',o.verif],['Custo e quem paga',brl(o.custo)+' · '+o.paga+(o.cobrado?'':' · não cobrado do cliente')],['Impacto no prazo',o.impacto],['Situação',C.caminho[o.passo]]];
+ return `<div class="pdf"><div class="row sp"><div><b>${C.construtora.nome}</b><br><span class="sub">${C.produto.nome}</span></div><span class="demo">${C.demo}</span></div>
+ <h2 style="margin:14px 0 4px">Relatório de Não Conformidade</h2><div class="sub">${o.id} · ${cli?'versão do cliente':'versão interna completa'} · página 1 de 1</div>
+ <table style="margin-top:10px"><tbody>${rows.map(r=>`<tr><th style="width:34%">${r[0]}</th><td>${r[1]}</td></tr>`).join('')}</tbody></table>
+ <div class="ph"><figure>${wallSVG(false)}<figcaption>📷 Antes · ${o.data} · desvio de prumo</figcaption></figure><figure>${wallSVG(true)}<figcaption>📷 Depois · ${o.passo>=3?'20/11 · refeito e conferido':'aguardando correção'}</figcaption></figure></div>
+ <div class="row sp" style="margin-top:14px"><span>Emitido por: ${o.resp}</span><span>Verificado por: ${o.passo>=4?'Eng. Marcos ✓':'______________'}</span></div>
+ <p class="sub">Encerrada, esta não conformidade vai sozinha para o book de obra (capítulo 5).</p></div>`}
+function renderOcorr(){
+ $('#oFilt').innerHTML=[['all','Todas'],...Object.entries(C.tipos).map(([k,v])=>[k,v[0]+' '+v[1]])].map(x=>`<button class="btn ${S.occF===x[0]?'':'ghost'} sm" data-a="occF" data-id="${x[0]}" aria-pressed="${S.occF===x[0]}">${x[1]}</button>`).join('');
+ const O=S.occ.filter(o=>S.occF==='all'||o.tipo===S.occF);
+ $('#kanban').innerHTML=C.caminho.map((c,i)=>`<div><h4>${c} · ${O.filter(o=>o.passo===i).length}</h4>${O.filter(o=>o.passo===i).map(o=>`<button class="kcard" data-a="occSel" data-id="${o.id}" aria-pressed="${o.id===S.occSel}"><b>${C.tipos[o.tipo][0]} ${o.id}</b><br>${o.t}<br><span class="sub">${C.obras[o.obra].cliente}</span></button>`).join('')}</div>`).join('');
+ const o=S.occ.find(x=>x.id===S.occSel),t=C.tipos[o.tipo],f=sup(o.forn);
+ const fld=o.tipo==='rnc'?[['Requisito',o.req],['Constatação',o.fato],['Causa',o.causa],['Ação imediata',o.imediata],['Ação corretiva',o.corretiva],['Verificação',o.verif]]:
+  o.tipo==='sin'?[['O que aconteceu',o.oque],['Boletim de ocorrência',o.bo],['Seguro acionado',o.apolice+' · '+o.seguradora],['Número do sinistro',o.nSin],['Franquia',brl(o.franquia)],['Prejuízo',brl(o.prejuizo)],['Ressarcimento previsto',brl(o.ressarc)]]:
+  o.tipo==='ret'?[['O que foi refeito',o.refeito],['Causa',o.causaTipo],['Responsável pela causa',o.respCausa],['Horas de retrabalho',o.horas+' h'],['Custo',brl(o.custo)]]:[['Fato do dia',o.t]];
+ $('#oDet').innerHTML=`<div class="row sp"><h3>${t[0]} ${t[1]} · ${o.id} · ${o.t}</h3><span class="pill ${o.passo===4?'p-good':'p-warn'}">${C.caminho[o.passo]}</span></div>
+ <div class="sub">${nomeObra(o.obra)} · ${o.local} · etapa ${o.etapa} · gravidade ${o.grav} · responsável ${o.resp} · prazo ${o.prazo}</div>
+ <div class="flow">${C.caminho.map((c,i)=>`<span class="${i<o.passo?'done':i===o.passo?'now':''}">${i<o.passo?'✓ ':''}${c}</span>`).join('')}</div>
+ <div class="row">${o.passo<4?`<button class="btn" data-a="occAdv" data-id="${o.id}">→ Avançar para "${C.caminho[o.passo+1]}"</button>`:'<span class="pill p-good">✓ Encerrada'+(o.tipo==='rnc'?' · foi para o book':'')+'</span>'}${o.tipo==='rnc'?`<button class="btn ghost" data-a="rnc" data-id="${o.id}">📄 Relatório de não conformidade (PDF)</button>`:''}</div>
+ <div><table style="margin-top:8px"><tbody>${fld.map(r=>`<tr><th style="width:34%">${r[0]}</th><td>${r[1]}</td></tr>`).join('')}<tr><th>Impacto no prazo</th><td>${o.impacto}</td></tr></tbody></table></div>
+ ${o.custo?`<div class="who-pays ${o.cobrado?'charged':''}"><b>Quem paga:</b> ${o.paga} · ${o.cobrado?'cobrado do cliente (aditivo aprovado)':'<b>não cobrado do cliente</b>'} · custo ${brl(o.custo)}</div>`:''}
+ <h4>Ligações automáticas</h4><ul class="tl"><li data-i="📒">Entrou no diário de ${o.data}</li>${o.custo?`<li data-i="💰">Custo de ${brl(o.custo)} no financeiro da obra, marcado como ${o.cobrado?'cobrado':'não cobrado'} do cliente</li>`:''}${f?`<li data-i="🏷️">Ligada à nota do fornecedor <button class="btn ghost sm" data-a="goSup" data-id="${f.id}">${f.n} · ${n1(nota(f))} ★</button></li>`:''}<li data-i="📅">Impacto no cronograma: ${o.impacto}</li>${o.tipo==='rnc'?'<li data-i="📘">Encerrada, vai para o book de obra (capítulo 5)</li>':''}</ul>
+ ${o.interno?`<div class="cmt">💬 <b>Comentário interno</b> <span class="itag">não aparece para o cliente</span><br>${o.interno}</div>`:''}`}
+</script>
+<script>
+/* ---------- fornecedores (interno) ---------- */
+function renderForn(){
+ $('#qmap').innerHTML=mapHTML(false);
+ const cats=[...new Set(C.fornecedores.map(f=>f.cat))];
+ $('#catF').innerHTML=[['all','Todas'],...cats.map(c=>[c,c])].map(x=>`<button class="btn ${S.catF===x[0]?'':'ghost'} sm" data-a="catF" data-id="${x[0]}" aria-pressed="${S.catF===x[0]}">${x[1]}</button>`).join('');
+ const F=C.fornecedores.filter(f=>S.catF==='all'||f.cat===S.catF).sort((a,b)=>nota(b)-nota(a));
+ $('#fCount').textContent=`${C.fornecedores.length} cadastrados · base única`;
+ $('#supList').innerHTML=F.map(f=>`<button class="sup" data-a="supSel" data-id="${f.id}" aria-pressed="${f.id===S.supSel}"><span><b>${f.n}</b><br><span class="sub">${f.cat}</span></span><span>${starsTxt(f)}</span></button>`).join('');
+ const f=sup(S.supSel);
+ $('#supDet').innerHTML=`<div class="row sp"><div><h3 style="margin:0">${f.n}</h3><div class="sub">${f.cat} · ${f.cont}</div></div><button class="btn ghost sm" data-a="wa" data-n="${f.n}">💬 WhatsApp</button></div>
+ <div class="row" style="margin:8px 0"><span style="font-size:32px;font-weight:800">${n1(nota(f))} ★</span><span class="sub">em ${f.aval} avaliações · ${f.rec}% recomendariam</span></div>
+ ${critHTML(f)}
+ <div class="row" style="margin:8px 0"><button class="btn ghost sm" data-a="rate" data-id="${f.id}">⭐ Avaliar entrega (simulado)</button><span class="sub">Só avalia quem tem pedido real com o fornecedor.</span></div>
+ <h4>Documentos</h4><div><table><thead><tr><th>Documento</th><th>Situação</th></tr></thead><tbody>${f.docs.map(d=>`<tr><td>${d[0]}</td><td><span class="pill ${d[1]==='pendente'?'p-crit':/vence/.test(d[1])?'p-warn':'p-good'}">${d[1]==='ok'?'✓ ok':d[1]}</span></td></tr>`).join('')}</tbody></table></div>
+ <h4>Histórico por obra (cotações, pedidos e avaliações)</h4><div><table><thead><tr><th>Obra</th><th>O quê</th><th>Situação</th></tr></thead><tbody>${f.hist.map(h=>`<tr><td>${C.obras[h[0]].cliente}</td><td>${h[1]}</td><td>${h[2]}</td></tr>`).join('')}</tbody></table></div>
+ ${f.lig?`<h4>Ocorrências ligadas (entram na nota)</h4><ul class="tl">${f.lig.map(l=>`<li data-i="⚠️">${l}</li>`).join('')}</ul>`:''}
+ <h4>💬 Comentários internos <span class="itag">não aparecem para o cliente</span></h4>${f.coment.map(c=>`<div class="cmt">${c}</div>`).join('')}
+ <div class="alert a-info">👤 <b>O cliente vê</b> só os fornecedores da obra dele, com a nota, os critérios e os preços das cotações dele. Nunca vê preços de outras obras nem estes comentários.</div>`}
+
+/* ---------- gestor ---------- */
+function situ(id){const p=pauseOf(id);if(p)return ['pause',`⏸ Pausada há ${plural(daysP(p),'dia','dias')}`];if(id==='rp')return ['info','● '+J().fase];const at=C.obras[id].atrasoDias;return at?['warn',`⚠ ${at} dias atrás`]:['good','✓ No prazo']}
+function renderGestor(){
+ $('#gObras').innerHTML=`<table><thead><tr><th>Obra · cliente</th><th>Fase</th><th>Situação</th><th class="n">Pronta (previsto)</th><th class="n">Orçado</th><th class="n">Comprometido</th><th class="n">Desvio</th><th class="n">Book</th><th class="n">Ocorrências abertas</th></tr></thead><tbody>${Object.keys(C.obras).map(k=>{const o=C.obras[k],T=tot(k),s=situ(k);return `<tr><td><b>${o.cliente}</b><br><span class="sub">${o.nome} · ${o.cidade}</span></td><td>${C.fases[iFase(k)]}</td><td><span class="pill p-${s[0]}">${s[1]}</span></td><td class="n">${k==='rp'&&!J().fis?'projeto '+etapas('rp')[0].p+'%':pc(fis(k))+' ('+pc(prevF(k))+')'}</td><td class="n">${mi(T.orc)}</td><td class="n">${mi(T.com)}</td><td class="n">${devTxt(T.dv,T.dvp)}</td><td class="n">${bookPct(k)}%</td><td class="n">${occOf(k).filter(x=>x.passo<4).length}</td></tr>`}).join('')}</tbody></table>`;
+ $('#gSel').innerHTML=Object.keys(C.obras).map(k=>`<option value="${k}"${k===S.gSel?' selected':''}>${C.obras[k].cliente}</option>`).join('');
+ $('#gFin').innerHTML=finHTML(S.gSel,false);
+ const aurora=pauseOf('aurora');let a='';
+ a+=`<div class="alert a-pause">⏸ <b>Colégio Aurora pausado há ${plural(daysP(aurora),'dia','dias')}</b> · depende de: órgão público (Bombeiros) · retomada prevista ${aurora.retomada}</div>`;
+ if(S.ppPause)a+=`<div class="alert a-pause">⏸ <b>Colégio Horizonte parado hoje</b> · ${S.ppPause.motivo} · depende de: ${S.ppPause.dep}</div>`;
+ if(S.cot.st<2)a+=`<div class="alert a-warn">🛒 <b>Portalux Esquadrias:</b> estrutura pré-moldada ${S.cot.st===0?'com mapa pronto para enviar ao cliente':'aguardando aprovação do cliente'}</div>`;
+ const sin=S.occ.find(o=>o.id==='SIN-002');if(sin.passo<4)a+=`<div class="alert a-crit">🌪️ <b>SIN-002 (Horizonte):</b> seguro acionado · ${C.caminho[sin.passo].toLowerCase()} · ressarcimento previsto ${brl(sin.ressarc)}</div>`;
+ a+=`<div class="alert a-info">📘 <b>Atlas:</b> book ${bookPct('atlas')}% · faltam ${C.obras.atlas.bookFalta.length} itens para a vistoria de 19/11</div>`;
+ $('#gAlerts').innerHTML=a;
+ const fila=[[S.cot.st===0,'🛒 Enviar a recomendação de pré-moldados para a Marina (Portalux Esquadrias)','Abrir mapa','goForn'],[!S.signed,'✍️ Revisar e assinar o diário de hoje do Colégio Horizonte','Abrir diário','goCampo'],[!S.waE,'📞 Cobrar o certificado de garantia da Épsilon (book da Atlas)','💬 WhatsApp','waE'],[S.occ.find(o=>o.id==='RNC-007').passo<4,'🧾 Verificar a correção da RNC-007 (alvenaria do bloco C)','Abrir','goOcc']].filter(x=>x[0]);
+ $('#gFila').innerHTML=fila.length?fila.map(x=>`<div class="row sp" style="border-bottom:1px solid var(--line);padding:8px 0"><span>${x[1]}</span><button class="btn sm" data-a="${x[3]}">${x[2]}</button></div>`).join(''):'<p class="sub">Fila vazia ✓</p>'}
+
+/* ---------- painel da diretoria (BI próprio) ---------- */
+function curvaS(){const c=C.obras.pp.curva,N=c.meses,W=640,H=260,pl=44,pr=96,pt=14,pb=34,x=i=>pl+i/N*(W-pl-pr),y=v=>pt+(1-v/100)*(H-pt-pb);
+ const prev=i=>{const k=1/(1+Math.exp(-0.45*(i-N/2))),k0=1/(1+Math.exp(0.45*N/2)),k1=1/(1+Math.exp(-0.45*N/2));return (k-k0)/(k1-k0)*100};
+ const pv=[...Array(N+1)].map((_,i)=>prev(i)),rf=fis('pp'),pf=prev(c.hoje);const rv=[...Array(c.hoje+1)].map((_,i)=>i===c.hoje?rf:pv[i]*(rf/pf)*(0.9+0.1*i/c.hoje));
+ const path=a=>a.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join(' ');
+ let s=`<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Curva S do Colégio Horizonte: previsto ${pc(pf)} e realizado ${pc(rf)} no mês atual">`;
+ [0,25,50,75,100].forEach(v=>{s+=`<line x1="${pl}" x2="${W-pr}" y1="${y(v)}" y2="${y(v)}" stroke="#e6e5df"/><text x="${pl-6}" y="${y(v)+5}" text-anchor="end" font-size="14" fill="#46453f">${v}%</text>`});
+ ['mar/26','jul/26','nov/26','mar/27','jul/27'].forEach((m,i)=>{s+=`<text x="${x(i*4)}" y="${H-10}" text-anchor="middle" font-size="14" fill="#46453f">${m}</text>`});
+ s+=`<line x1="${x(c.hoje)}" x2="${x(c.hoje)}" y1="${pt}" y2="${H-pb}" stroke="#111" stroke-width="2"/><text x="${x(c.hoje)+4}" y="${pt+12}" font-size="14" font-weight="700">hoje</text>`;
+ s+=`<path d="${path(pv)}" fill="none" stroke="#8a8880" stroke-width="2" stroke-dasharray="6 4"/><path d="${path(rv)}" fill="none" stroke="#1f63b8" stroke-width="2.5"/><circle cx="${x(c.hoje)}" cy="${y(rf)}" r="5" fill="#1f63b8" stroke="#fff" stroke-width="2"/>`;
+ s+=`<text x="${W-pr+6}" y="${y(100)+5}" font-size="14" fill="#46453f">Previsto</text><text x="${x(c.hoje)+8}" y="${y(rf)+18}" font-size="14" font-weight="700" fill="#111">Realizado ${pc(rf)}</text></svg>`;
+ return s+`<div class="legend"><span><i style="background:#8a8880"></i>Previsto (tracejado)</span><span><i style="background:#1f63b8"></i>Realizado</span></div><div class="sub">Hoje: previsto ${pc(pf)} · realizado ${pc(rf)} · ${n1(pf-rf)} pontos atrás, recuperável pela folga.</div>
+ <details><summary class="sub" style="min-height:44px;display:flex;align-items:center;cursor:pointer">Ver os números em tabela</summary><table><thead><tr><th>Mês</th><th class="n">Previsto</th><th class="n">Realizado</th></tr></thead><tbody>${pv.map((v,i)=>i%2===0||i===c.hoje?`<tr><td>mês ${i}</td><td class="n">${pc(v)}</td><td class="n">${i<=c.hoje?pc(rv[i]):'—'}</td></tr>`:'').join('')}</tbody></table></details>`}
+function hbars(items,fmt,max,div){return items.map(it=>{const w=Math.min(50,Math.abs(it.v)/max*50);const st=div?(it.v>=0?`left:50%;width:${w}%`:`left:${50-w}%;width:${w}%`):`left:0;width:${Math.min(100,it.v/max*100)}%`;return `<div class="hbar"><span>${it.n}</span><div class="trk">${div?'<span class="zero"></span>':''}<i style="${st};background:${it.c||'#1f63b8'}"></i></div><b style="text-align:right">${fmt(it.v)}</b></div>`}).join('')}
+function renderBI(){const K=Object.keys(C.obras),T=K.map(k=>tot(k)),tx=C.construtora.taxaAdm;
+ const orc=T.reduce((a,t)=>a+t.orc,0),rea=T.reduce((a,t)=>a+t.rea,0),dv=T.reduce((a,t)=>a+t.dv,0);
+ const RS=S.occ.filter(o=>o.tipo!=='oc'),rs=RS.reduce((a,o)=>a+o.custo,0),rsC=RS.filter(o=>o.cobrado).reduce((a,o)=>a+o.custo,0);
+ const txM=Object.values(C.bi.taxaMes).reduce((a,b)=>a+b,0),atr=K.filter(k=>C.obras[k].atrasoDias||pauseOf(k)).length;
+ $('#biTiles').innerHTML=[['Carteira',`${K.length} obras`,mi(orc)+' orçados'],['Realizado',mi(rea),pc(rea/orc*100)+' do orçado'],['Desvio de custo',`<span class="${dv>0?'up':'dn'}">${sgn(dv,brl)}</span>`,sgn(dv/orc*100,x=>pc(x,2))+' da carteira'],['Desvio de prazo',`${atr} de ${K.length}`,'obras com dias a mais'],['Retrabalho e sinistros',brl(rs),brl(rs-rsC)+' não cobrados do cliente'],['Taxa de administração',brl(txM),'no mês · '+mi(rea*tx)+' acumulada']].map(t=>`<div class="card kpi"><div class="sub">${t[0]}</div><div class="mid">${t[1]}</div><div class="sub">${t[2]}</div></div>`).join('');
+ $('#biCusto').innerHTML=hbars(K.map((k,i)=>({n:C.obras[k].cliente,v:T[i].dvp,c:T[i].dvp>0?'#a51d1d':'#0b6b2e'})),v=>sgn(v,x=>pc(x,1)),1.5,true)+'<p class="sub">À direita do traço: acima do orçado. À esquerda: abaixo.</p>';
+ $('#biPrazo').innerHTML=hbars(K.map(k=>({n:C.obras[k].cliente,v:C.obras[k].atrasoDias,c:pauseOf(k)?'#5b3a9e':'#7a4b00'})),v=>v?'+'+v+' dias':'0 dia',15,false)+'<p class="sub">Aurora: dias somados pela pausa (Bombeiros). Horizonte: recuperável pela folga.</p>';
+ $('#biCurva').innerHTML=curvaS();
+ $('#biRet').innerHTML=`<table><thead><tr><th>Obra</th><th class="n">Retrabalho</th><th class="n">Sinistros</th><th class="n">Não conformidades</th><th class="n">Cobrado</th></tr></thead><tbody>${K.map(k=>{const O=occOf(k),s=t=>O.filter(o=>o.tipo===t).reduce((a,o)=>a+o.custo,0);return `<tr><td>${C.obras[k].cliente}</td><td class="n">${brl(s('ret'))}</td><td class="n">${brl(s('sin'))}</td><td class="n">${brl(s('rnc'))}</td><td class="n">${brl(O.filter(o=>o.cobrado).reduce((a,o)=>a+o.custo,0))}</td></tr>`}).join('')}</tbody></table><p class="sub">Recuperado de fornecedores e do seguro: ${brl(RS.filter(o=>!o.cobrado).reduce((a,o)=>a+o.custo,0)-10000)} · franquia pela construtora: R$ 10.000</p>`;
+ $('#biRank').innerHTML=C.fornecedores.slice().sort((a,b)=>nota(b)-nota(a)).slice(0,6).map((f,i)=>`<div class="row sp" style="border-bottom:1px solid var(--line);padding:6px 0"><span>${i+1}. ${f.n}</span><span>${starsTxt(f)}</span></div>`).join('');
+ $('#biCmp').innerHTML=C.bi.comprasPendentes.filter(c=>!(c[0]==='rp'&&S.cot.st===2)).map(c=>`<div style="border-bottom:1px solid var(--line);padding:6px 0"><b>${C.obras[c[0]].cliente}</b> · ${c[1]}<br><span class="sub">${c[0]==='rp'&&S.cot.st===0?'mapa pronto para enviar ao cliente':c[2]}</span></div>`).join('');
+ $('#biTaxa').innerHTML=`<table><thead><tr><th>Obra</th><th class="n">No mês</th><th class="n">Acumulada</th></tr></thead><tbody>${K.map((k,i)=>`<tr><td>${C.obras[k].cliente}</td><td class="n">${brl(C.bi.taxaMes[k])}</td><td class="n">${brl(T[i].rea*tx)}</td></tr>`).join('')}</tbody></table><p class="sub">Taxa de ${pc(tx*100)} (exemplo), calculada sozinha sobre o custo realizado.</p>`;
+ const by={};S.D.apontamentos.forEach(a=>{const t=task(a.tid),k=a.emp+'|'+t.u;by[k]=by[k]||{emp:a.emp,u:t.u,hh:0,q:0,n:0};by[k].hh+=a.pes*a.hrs;by[k].q+=a.qtd;by[k].n++});
+ $('#biProd').innerHTML=`<table><thead><tr><th>Equipe</th><th class="n">Apontamentos</th><th class="n">Pessoas × horas</th><th class="n">Executado</th><th class="n">Produtividade</th></tr></thead><tbody>${Object.values(by).map(b=>`<tr><td>${b.emp}</td><td class="n">${b.n}</td><td class="n">${b.hh} h</td><td class="n">${fmtQ(b.q,b.u)}</td><td class="n">${n1(b.q/b.hh)} ${b.u} por hora-pessoa</td></tr>`).join('')}</tbody></table>`}
+
+/* ---------- book de obra ---------- */
+function bookFalta(id){if(id==='atlas')return C.obras.atlas.bookFalta;const A=bookArr(id);return A.map((v,i)=>v<100?C.book.falta[i]:null).filter(Boolean)}
+function bookHTML(id,client){const A=bookArr(id),p=bookPct(id),o=C.obras[id],F=bookFalta(id);let pg=3;const idx=C.book.capitulos.map((c,i)=>{const r=`<li><span>${i+1}. ${c}</span> <span class="sub">p. ${pg}</span></li>`;pg+=C.book.paginas[i];return r}).join('');
+ return `<div class="lay"><div class="card c7"><div class="row sp"><h3 style="margin:0">📘 Book ${p}% completo</h3><span class="pill ${p>=90?'p-good':'p-info'}">${p>=90?'quase pronto':'book vivo · se forma sozinho'}</span></div>
+ <div class="bar green" style="height:16px"><i style="width:${p}%"></i></div>
+ ${A.map((v,i)=>`<div class="chap"><span>${i+1}. ${C.book.capitulos[i]}</span><div class="bar sm ${v>=100?'green':''}"><i style="width:${v}%"></i></div><b style="text-align:right">${v}%</b></div>`).join('')}
+ <h4>O que falta (${F.length})</h4><ul class="tl">${F.slice(0,6).map(f=>`<li data-i="○">${f}</li>`).join('')}${F.length>6?`<li data-i="…">e mais ${F.length-6}</li>`:''}</ul>
+ <p class="sub">Cada documento lançado no sistema vai sozinho para o capítulo certo: a nota fiscal na compra, a foto no diário, a ART nos documentos e a não conformidade encerrada.</p>
+ <button class="btn" data-a="genBook" data-id="${id}">📄 ${p>=90?'Gerar book (PDF)':'Gerar prévia do book (PDF)'}</button>${S.bookGen[id]?' <span class="pill p-good">✓ PDF gerado</span>':''}</div>
+ <div class="card c5"><h4 style="margin-top:0">Prévia da capa</h4><div class="cover"><div><div style="font-size:16px;color:#c8ccd2">BOOK DE OBRA</div><div style="font-size:24px;font-weight:800">${o.cliente}</div><div>${o.nome} · ${o.area.toLocaleString('pt-BR')} m²</div><div>${o.cidade}</div></div><div class="row sp"><div>Construtora: ${C.construtora.nome}<br><span style="color:#c8ccd2">${C.produto.nome}</span></div><div class="qr" role="img" aria-label="QR code da versão digital"></div></div></div>
+ <h4>Índice</h4><ol class="tl" style="padding:0">${idx}</ol></div></div>`}
+function bookPDF(id){const o=C.obras[id];let pg=3;
+ return `<div class="pdf"><div class="row sp"><b>${C.construtora.nome}</b><span class="demo">${C.demo}</span></div><div class="cover" style="margin:12px 0"><div><div style="font-size:16px;color:#c8ccd2">BOOK DE OBRA</div><div style="font-size:28px;font-weight:800">${o.cliente}</div><div>${o.nome} · ${o.area.toLocaleString('pt-BR')} m² · ${o.cidade}</div></div><div class="row sp"><span>${bookPct(id)}% completo · ${C.hoje}</span><div class="qr" role="img" aria-label="QR code"></div></div></div>
+ <h2>Índice</h2><table><tbody>${C.book.capitulos.map((c,i)=>{const r=`<tr><td>${i+1}. ${c}</td><td class="n">p. ${pg}</td></tr>`;pg+=C.book.paginas[i];return r}).join('')}</tbody></table>
+ <p class="sub">PDF com capa, índice e divisórias (${pg} páginas, simulado) e versão digital com busca. O QR code da capa leva à versão digital.</p></div>`}
+function renderBook(){$('#bSel').innerHTML=Object.keys(C.obras).map(k=>`<button class="btn ${k===S.bookSel?'':'ghost'}" data-a="bookSel" data-id="${k}" aria-pressed="${k===S.bookSel}">${C.obras[k].cliente} · ${bookPct(k)}%</button>`).join('');$('#bookBox').innerHTML=bookHTML(S.bookSel,false)}
+
+/* ---------- topo, render geral e eventos ---------- */
+function renderTop(){const id=curObra(),o=C.obras[id];
+ $('#tCtx').innerHTML=S.view==='cliente'?`Obra: <b>${o.cliente}</b> · Contrato por administração ${q('Administração (custo + taxa): o cliente paga o custo real da obra (material, mão de obra, equipamentos) e mais uma taxa fixa para a construtora administrar tudo.')}`:'🔒 Visão interna da construtora · não aparece para o cliente'}
+function render(){renderTop();renderCliente();renderCampo();renderOcorr();renderForn();renderGestor();renderBI();renderBook();rt()}
+const VIEWS=['cliente','campo','ocorr','forn','gestor','bi','book'];
+function show(v){if(S.present&&v!=='cliente')v='cliente';S.view=v;$$('.view').forEach(s=>s.hidden=s.id!=='v-'+v);$$('.tabs [data-view]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.view===v)));history.replaceState(null,'',location.search+'#'+v);renderTop();window.scrollTo(0,0)}
+function approve(id){const d=S.dec.find(x=>x.id===id);if(!d||d.done)return;const i=d.ch.findIndex(c=>c[1]==='now');d.ch[i][1]='done';
+ if(d.ch[i+1]){d.ch[i+1][1]='now';gt('✓ Aprovado por '+d.ch[i][0].split(' (')[0]+'. Agora: aguardando '+d.ch[i+1][0]+'.');feed('✓ '+d.t+': aprovado por '+d.ch[i][0].split(' (')[0]);render();return}
+ d.done=true;feed('✓ '+d.t+': aprovado');
+ if(id==='rp-pm'){S.cot.st=2;gt('✓ Compra aprovada. Pedido PC-0231 emitido para Pré-Moldados Alfa.')}
+ else gt('✓ Aprovado. A construtora já foi avisada.');render()}
+document.addEventListener('click',e=>{
+ const tab=e.target.closest('[data-view]');if(tab){show(tab.dataset.view);return}
+ const qb=e.target.closest('.q'),tip=$('#qtip');
+ if(qb){const r=qb.getBoundingClientRect();tip.textContent=qb.dataset.h;tip.hidden=false;tip.style.top=(r.bottom+window.scrollY+4)+'px';tip.style.left=Math.max(8,Math.min(r.left+window.scrollX-20,document.documentElement.clientWidth-330))+'px';e.preventDefault();return}
+ tip.hidden=true;
+ const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,id=b.dataset.id;
+ const A={
+  persona:()=>{S.persona=id;render()},
+  obra:()=>{S.sel[S.persona]=id;render()},
+  fase:()=>{S.rpF=+b.dataset.i;if(J().fase==='Compras')sendCot(true);render()},
+  ok:()=>approve(id),
+  adj:()=>gt('No produto: abre um campo para escrever o ajuste. A construtora recebe na hora.'),
+  sendCot:()=>{sendCot();feed('✋ Compra para aprovar: estrutura pré-moldada (Portalux Esquadrias)');render()},
+  goCliRp:()=>{S.persona='marina';S.rpF=3;render();show('cliente')},
+  rnc:()=>{const o=S.occ.find(x=>x.id===id);$('#mBody').innerHTML=rncPDF(o,!!b.dataset.cli);$('#modal').hidden=false;rt()},
+  closeM:()=>{$('#modal').hidden=true},
+  occF:()=>{S.occF=id;render()},occSel:()=>{S.occSel=id;render()},
+  occAdv:()=>{const o=S.occ.find(x=>x.id===id);if(o.passo<4){o.passo++;feed(`${C.tipos[o.tipo][0]} ${o.id}: ${C.caminho[o.passo].toLowerCase()}`);gt(`${o.id} passou para "${C.caminho[o.passo]}".`);render()}},
+  goSup:()=>{S.supSel=id;S.catF='all';render();show('forn')},
+  supSel:()=>{S.supSel=id;render()},catF:()=>{S.catF=id;render()},
+  wa:()=>gt(`💬 Abriria o WhatsApp de ${b.dataset.n} (número fictício). A conversa fica guardada no cadastro.`),
+  rate:()=>{const f=sup(id);f.notas=f.notas.map(v=>(v*f.aval+5)/(f.aval+1));f.aval++;gt(`⭐ Avaliação registrada: ${f.n} agora tem ${n1(nota(f))} ★ em ${f.aval} avaliações.`);render()},
+  xls:()=>gt('⬇️ Planilha "carteira-obras.xlsx" gerada (simulado): carteira, orçado × realizado, ocorrências, compras e fornecedores.'),
+  bookSel:()=>{S.bookSel=id;render()},
+  genBook:()=>{S.bookGen[id]=1;$('#mBody').innerHTML=bookPDF(id);$('#modal').hidden=false;render();rt()},
+  ttab:()=>{S.tTab=id;render()},
+  tStart:()=>send({t:'st',id,v:'exec'}),
+  tDone:()=>send({t:'st',id,v:'done'}),
+  tImp:()=>{S.impT=S.impT===id?null:id;render()},
+  impOk:()=>{const m=$('#impMot').value;S.impT=null;send({t:'st',id,v:'imp',motivo:m})},
+  tFree:()=>send({t:'st',id,v:'exec'}),
+  apOpen:()=>{const t=task(id);S.ap={tid:id,emp:t.eq,pes:t.pes||4,hrs:t.hrs||8,qtd:t.qtd||10,fotos:1,obs:''};render();$('#apForm').scrollIntoView({block:'nearest'})},
+  apStep:()=>{const k=b.dataset.k;S.ap[k]=Math.max(k==='qtd'?0:1,S.ap[k]+ +b.dataset.v);render()},
+  apFoto:()=>{S.ap.fotos++;render()},
+  apSave:()=>{const ap={...S.ap,emp:$('#apEmp').value,obs:$('#apObs').value};S.ap=null;S.tTab=task(ap.tid).st==='todo'?'exec':S.tTab;send({t:'ap',ap});gt(L.online?'✓ Apontamento salvo. O diário e o avanço já foram atualizados.':'📦 Sem sinal: apontamento salvo no celular. Envia sozinho quando o sinal voltar.')},
+  apCancel:()=>{S.ap=null;render()},
+  voz:()=>voz(),
+  vOk:()=>{$('#voice').hidden=true;send({t:'voz'})},
+  vNo:()=>gt('✎ No app real: toque num item para corrigir antes de publicar.'),
+  foto:()=>send({t:'foto'}),
+  parada:()=>pForm(),
+  dep:()=>{$$('#pDep [data-a]').forEach(x=>{const on=x===b;x.setAttribute('aria-pressed',String(on));x.classList.toggle('ghost',!on)})},
+  pSend:()=>{const dep=$('#pDep [aria-pressed=true]').dataset.w;$('#pForm').hidden=true;send({t:'pause',motivo:$('#pMot').value,dep})},
+  retomar:()=>{S.ppPause=null;S.D.extra.push({h:hm(),t:'▶ Obra retomada'});feed('▶ Obra retomada');render()},
+  sign:()=>{S.signed=hm();feed('✍️ Diário de hoje assinado pelo engenheiro');gt('✍️ Diário assinado. O cliente já vê a versão dele.');render()},
+  goForn:()=>show('forn'),goCampo:()=>show('campo'),goOcc:()=>{S.occSel='RNC-007';render();show('ocorr')},
+  waE:()=>{S.waE=1;gt('💬 Abriria o WhatsApp da Épsilon com o pedido do certificado (número fictício).');render()}
+ };
+ if(A[a])A[a]();
+});
+document.addEventListener('change',e=>{if(e.target.id==='gSel'){S.gSel=e.target.value;render()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('#qtip').hidden=true;$('#modal').hidden=true}});
+$('#presBtn').addEventListener('click',()=>{S.present=!S.present;document.body.classList.toggle('present',S.present);$('#presBtn').setAttribute('aria-pressed',String(S.present));$('#presBtn').textContent=S.present?'🎬 Só visão do cliente: ligado':'🎬 Só visão do cliente';if(S.present)show('cliente');gt(S.present?'🎬 Telas internas escondidas. Só a visão do cliente aparece.':'Telas internas visíveis de novo.')});
+$('#simNet').addEventListener('click',()=>{L.online=!L.online;if(L.online)setTimeout(flush,600);render()});
+$('#solBtn').addEventListener('click',()=>{L.sol=!L.sol;$('#phField').classList.toggle('sol',L.sol);$('#solBtn').setAttribute('aria-pressed',String(L.sol))});
+setInterval(()=>{$$('[data-clock]').forEach(el=>{const p=pauseOf(el.dataset.clock);if(p)el.querySelector('.clock').textContent=clockTxt(p)})},1000);
+/* ---------- início ---------- */
+S.D.extra=[];S.impT=null;S.waE=0;
+$('#pNome').textContent=C.produto.nome;$('#pSelo').textContent=C.produto.selo;$('#tSig').textContent=C.construtora.sigla;$('#tNome').textContent=C.construtora.nome;
+$('#demoTop').textContent='🎭 '+C.demo;$('#demoFix').textContent='🎭 '+C.demo;
+$('#foot').textContent='Fora do piloto: segurança do trabalho de terceiros · interferências na operação · câmera ao vivo · chat. · '+C.demo+': nomes de fornecedores, valores, datas e ocorrências são fictícios. Nada aqui é proposta comercial.';
+const U=new URLSearchParams(location.search);
+if(U.get('persona')&&C.clientes.some(c=>c.id===U.get('persona')))S.persona=U.get('persona');
+if(U.get('fase')){S.rpF=Math.max(0,Math.min(5,+U.get('fase')));if(J().fase==='Compras')sendCot(true)}
+render();
+if(U.get('apresentacao')==='1')$('#presBtn').click();
+const h0=location.hash.slice(1);if(VIEWS.includes(h0))show(h0);
+</script>
+</body>
+</html>

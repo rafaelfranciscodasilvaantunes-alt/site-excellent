@@ -3,6 +3,7 @@
 # A CSP abaixo é a mesma de contentSecurityPolicy (apps/web/vite.config.ts),
 # mais frame-ancestors, que <meta> não suporta. Um teste unitário falha se as
 # duas divergirem; scripts/verificar-cabecalhos.mjs confere a URL publicada.
+# Referrer-Policy: no-referrer, igual à <meta name="referrer"> do piloto.
 /sw.js
   Cache-Control: no-cache
 
@@ -11,6 +12,6 @@
   Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
-  Referrer-Policy: strict-origin-when-cross-origin
+  Referrer-Policy: no-referrer
   Permissions-Policy: camera=(self), geolocation=(self), microphone=(self)
   Cross-Origin-Opener-Policy: same-origin

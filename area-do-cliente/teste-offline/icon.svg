@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Plataforma de Obras">
+  <rect width="512" height="512" rx="96" fill="#17324d"/>
+  <path d="M100 236 256 112l156 124v164H100z" fill="#f2f5f7"/>
+  <path d="M176 400V268h160v132" fill="#f1b82d"/>
+  <path d="M216 400v-92h80v92" fill="#176b4d"/>
+</svg>

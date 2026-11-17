@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#17324d" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Plataforma de Obras" />
+    <title>Diário rápido · Plataforma de Obras</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icon.svg" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./config.js"></script>
+    <script type="module" src="./app.js"></script>
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">Plataforma de Obras</p>
+        <h1>Diário rápido</h1>
+      </div>
+      <output id="connection-status" class="connection-badge" aria-live="polite">
+        Verificando conexão…
+      </output>
+    </header>
+
+    <main>
+      <p id="simulated-banner" class="simulated-banner" hidden>
+        Este é um teste. O envio é <strong>simulado</strong>: nada é guardado em servidor. O envio real chega com o servidor, na próxima etapa (S3).
+      </p>
+      <section class="card" aria-labelledby="novo-apontamento">
+        <h2 id="novo-apontamento">Novo apontamento</h2>
+        <p class="supporting-text">Salva primeiro neste aparelho. O envio acontece quando a internet voltar.</p>
+
+        <form id="entry-form">
+          <label for="entry-text">O que aconteceu?</label>
+          <textarea
+            id="entry-text"
+            name="texto"
+            rows="4"
+            minlength="3"
+            required
+            placeholder="Ex.: Conferência da concretagem concluída."
+          ></textarea>
+
+          <label for="entry-photo">Foto</label>
+          <input id="entry-photo" name="foto" type="file" accept="image/*" capture="environment" required />
+
+          <p id="storage-message" class="storage-message" aria-live="polite"></p>
+          <button type="submit">Salvar apontamento</button>
+        </form>
+      </section>
+
+      <section class="entries-section" aria-labelledby="apontamentos-salvos">
+        <div class="section-heading">
+          <h2 id="apontamentos-salvos">Apontamentos</h2>
+          <span id="pending-count" class="pending-count">0 aguardando</span>
+        </div>
+        <p id="empty-state" class="empty-state">Nenhum apontamento neste aparelho.</p>
+        <ol id="entry-list" class="entry-list"></ol>
+      </section>
+    </main>
+
+    <template id="entry-template">
+      <li class="entry-card">
+        <div class="entry-content">
+          <p class="entry-text"></p>
+          <p class="entry-meta"></p>
+          <p class="entry-error" hidden></p>
+        </div>
+        <div class="entry-actions">
+          <span class="sync-status"></span>
+          <button class="retry-button secondary" type="button" hidden>Reenviar</button>
+        </div>
+      </li>
+    </template>
+  </body>
+</html>

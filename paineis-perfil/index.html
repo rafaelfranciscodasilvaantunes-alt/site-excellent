@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>Painéis por perfil · o que cada um vê</title>
+<style>
+body{font-family:system-ui,-apple-system,sans-serif;margin:0;padding:16px;max-width:820px;margin:auto;color:#1d2433;line-height:1.45}
+h1{font-size:1.35rem;margin:.2em 0}h2{font-size:1.1rem;margin-top:1.6em;border-bottom:2px solid #e3e7ef;padding-bottom:4px}
+h3{font-size:1rem;margin:1.2em 0 .3em}
+small{color:#5b6475}.card{border:1px solid #e3e7ef;border-radius:10px;padding:10px 12px;margin:8px 0}
+table{border-collapse:collapse;width:100%;font-size:.88rem}td,th{border-bottom:1px solid #eef1f6;padding:6px 4px;text-align:left;vertical-align:top}
+.ok{color:#0a7a3d;font-weight:600}.and{color:#a15c00;font-weight:600}.blo{color:#b3261e;font-weight:600}.crit{background:#fff6e5}
+.aviso{background:#fff6e5;border-left:4px solid #e8a33d;padding:8px 12px;border-radius:6px}
+ul{padding-left:20px}
+.prints{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap;margin:8px 0}
+.prints figure{margin:0}.prints figcaption{font-size:.78rem;color:#5b6475}
+.prints img{border:1px solid #e3e7ef;border-radius:8px;display:block}
+.cel{width:150px}.pc{width:440px;max-width:100%}
+</style></head><body>
+<h1>Painéis por perfil: o que cada um vê e o que o gestor configura</h1>
+<small>20/11/2026. Os prints são da prévia pública com os <b>dados ilustrativos</b> da demonstração (senha <code>demo</code>). Nenhum dado real.</small>
+
+<p class="aviso"><b>Em resumo.</b> Quem decide o que cada pessoa vê é o <b>banco</b>, não a tela. Isso já funciona para: acesso por obra, alçada de compras e o que o cliente vê de valores. Mas ainda <b>não há tela</b> para mudar essas regras. Hoje só a diretoria pode mudá-las, e só pelo banco. O <b>gestor não configura</b> o que engenheiros e o campo veem. Ele só convida engenheiro, campo e cliente para as obras dele.</p>
+
+<p class="aviso"><b>Limites dos prints.</b> A prévia só tem login de <b>diretoria</b> e de <b>cliente</b>. Gestor, engenheiro e campo ainda não têm login próprio na demo. Para o gestor e o campo, usei a tela de Compras, que tem a opção "Ver como". O engenheiro ficou <b>sem print</b>. Não tirei prints da homologação porque eu não tenho o login de teste de lá. Tudo aqui vem só da prévia.</p>
+
+<h2>1. Diretoria</h2>
+<div class="prints">
+<figure><img class="cel" src="img/diretoria-inicio-celular.jpg" alt="Diretoria, carteira de obras no celular"><figcaption>Início · celular</figcaption></figure>
+<figure><img class="pc" src="img/diretoria-inicio-computador.jpg" alt="Diretoria, carteira de obras no computador"><figcaption>Início · computador</figcaption></figure>
+<figure><img class="cel" src="img/diretoria-obra-celular.jpg" alt="Diretoria, visão da obra no celular"><figcaption>Dentro da obra · celular</figcaption></figure>
+<figure><img class="pc" src="img/diretoria-obra-computador.jpg" alt="Diretoria, visão da obra no computador"><figcaption>Dentro da obra · computador</figcaption></figure>
+</div>
+<ul>
+<li><b>Vê:</b> todas as obras da construtora, sem precisar estar ligado a cada uma. Vê todas as telas da obra: relatório, diário, cronograma, documentos das equipes, orçamento, orçado × realizado, compras, montagem e remuneração.</li>
+<li><b>Pode:</b> criar obra. Convidar qualquer perfil, inclusive outra diretoria e gestor. Aprovar compra de <b>qualquer valor</b>. Cadastrar fornecedor. Mudar a alçada de quem aprova. Definir o que o cliente vê de valores. Enviar documentos das equipes.</li>
+<li><b>Só a diretoria</b> dá o perfil de gestor ou diretoria, muda alçada e muda o que o cliente vê. Ninguém muda o próprio perfil nem a própria alçada.</li>
+</ul>
+
+<h2>2. Gestor (construtora / gestor de obras)</h2>
+<div class="prints">
+<figure><img class="cel" src="img/gestor-compras-celular.jpg" alt="Compras vista como gestor no celular"><figcaption>Compras "Ver como: Gestor" · celular</figcaption></figure>
+<figure><img class="pc" src="img/gestor-compras-computador.jpg" alt="Compras vista como gestor no computador"><figcaption>Compras "Ver como: Gestor" · computador</figcaption></figure>
+</div>
+<ul>
+<li><b>Vê:</b> só as obras em que foi incluído. Dentro delas, vê orçamento, cronograma, diário, orçado × realizado e compras <b>com preço</b>.</li>
+<li><b>Pode:</b> editar orçamento e cronograma, registrar o diário, cotar compras, comparar fornecedores e <b>aprovar até a alçada dele</b>. Acima da alçada, a compra vai para a diretoria. Também pode convidar engenheiro, campo e cliente para as obras dele.</li>
+<li><b>Não pode:</b> aprovar a própria solicitação, dar o perfil de gestor ou diretoria, nem mudar alçada.</li>
+</ul>
+
+<h2>3. Engenheiro</h2>
+<p><small>Sem print: a prévia não tem login de engenheiro, e a tela de Compras não tem a opção "Ver como: engenheiro".</small></p>
+<ul>
+<li><b>Vê:</b> só as obras em que foi incluído. Vê orçamento, cronograma, diário e orçado × realizado. Em compras, vê os pedidos da obra <b>sem preço</b>.</li>
+<li><b>Pode:</b> quase tudo o que o gestor pode na obra: editar orçamento e cronograma, registrar o diário e convidar engenheiro, campo e cliente. Também faz pedido de compra.</li>
+<li><b>Não pode:</b> cotar, ver preço de compra nem aprovar compra.</li>
+<li><b>Ponto para decidir:</b> hoje o banco dá ao engenheiro o mesmo poder do gestor no orçamento e nos convites. Se isso não for o desejado, é um ajuste pequeno no banco.</li>
+</ul>
+
+<h2>4. Campo (equipe de obra)</h2>
+<div class="prints">
+<figure><img class="cel" src="img/campo-compras-celular.jpg" alt="Compras vista por quem pede, no celular"><figcaption>Compras "Ver como: Quem pede (campo)" · celular</figcaption></figure>
+<figure><img class="pc" src="img/campo-compras-computador.jpg" alt="Compras vista por quem pede, no computador"><figcaption>Compras "Ver como: Quem pede (campo)" · computador</figcaption></figure>
+</div>
+<ul>
+<li><b>Vê:</b> só as obras em que foi incluído. Vê o cronograma e o diário da obra. Em compras, vê só os <b>próprios pedidos</b>, sem preço.</li>
+<li><b>Pode:</b> registrar o que foi feito no dia, com fotos, e corrigir o que ele mesmo lançou. Pode pedir material ou serviço pelo catálogo e registrar o recebimento. Se a montagem estiver ligada para o campo, lança e vê só os próprios lançamentos.</li>
+<li><b>Não pode:</b> ver orçamento, preço de compra, remuneração nem convidar pessoas.</li>
+</ul>
+
+<h2>5. Cliente final</h2>
+<div class="prints">
+<figure><img class="cel" src="img/cliente-inicio-celular.jpg" alt="Cliente, minhas obras no celular"><figcaption>Início · celular</figcaption></figure>
+<figure><img class="pc" src="img/cliente-inicio-computador.jpg" alt="Cliente, minhas obras no computador"><figcaption>Início · computador</figcaption></figure>
+<figure><img class="cel" src="img/cliente-obra-celular.jpg" alt="Cliente, visão da obra no celular"><figcaption>Dentro da obra · celular</figcaption></figure>
+<figure><img class="pc" src="img/cliente-obra-computador.jpg" alt="Cliente, visão da obra no computador"><figcaption>Dentro da obra · computador</figcaption></figure>
+</div>
+<ul>
+<li><b>Vê:</b> só as próprias obras. Vê as fases, o relatório da semana, o diário publicado, o cronograma e a nota dos fornecedores.</li>
+<li><b>Não vê:</b> compras, preço de fornecedor, módulos da construtora nem nada de outros clientes. Isso vale mesmo que alguém tente pela internet sem usar a tela, porque o banco recusa.</li>
+<li><b>Valores:</b> por padrão, vê só o <b>preço de venda</b>. Isso pode mudar por obra (veja a tabela abaixo).</li>
+</ul>
+
+<h2>O gestor consegue configurar o que engenheiros e o campo veem?</h2>
+<table><tr><th>Item</th><th>Já existe</th><th>Falta</th><th>Tarefa · horas · cabe até 30/11?</th></tr>
+<tr><td><b>Módulos ligados por empresa e por perfil</b></td>
+<td class="ok">No banco: cada módulo (gestão, montagem, compras) liga por empresa e por perfil. O banco barra quem não tem o módulo. Compras nasce ligado para gestor, engenheiro e campo. Montagem nasce desligada.</td>
+<td class="and">Não há tela. Ninguém liga ou desliga pelo app, nem a diretoria. Hoje só o operador muda isso, direto no banco. O menu do app real que segue os módulos ainda está em revisão (EXC-144).</td>
+<td>Tela "Módulos" só para a diretoria, com registro de quem mudou · <b>8 h</b> · <span class="blo">não cabe</span>: o padrão atual já serve para 30/11. Fica para a 1ª semana de dezembro.</td></tr>
+<tr><td><b>Acesso por obra</b> (quem entra em qual obra)</td>
+<td class="ok">Cada pessoa só vê as obras em que foi incluída. A diretoria vê todas. Existe tela de convite: a diretoria convida qualquer perfil, e o gestor ou engenheiro convida engenheiro, campo e cliente para as obras dele.</td>
+<td class="and">Não há tela para ver quem tem acesso a cada obra, tirar alguém nem trocar o perfil. O banco já permite fazer isso.</td>
+<td>Lista de pessoas por obra, com "tirar acesso" e "trocar perfil" · <b>5 h</b> · <span class="and">cabe só se alguém tiver folga depois de 25/11</span>. Recomendo fazer, porque tirar o acesso de quem sai da obra é o que mais vai fazer falta.</td></tr>
+<tr><td><b>Alçada de aprovação de compras</b></td>
+<td class="ok">No banco: o valor é por pessoa e por obra. Só a diretoria muda. O gestor aprova até esse valor, e acima dele vai para a diretoria. Quem pede não aprova o próprio pedido. A decisão guarda a alçada que valia na hora.</td>
+<td class="and">Não há tela para mudar o valor. Na prévia, o valor está fixo em R$ 20.000.</td>
+<td>Campo "alçada" na lista de pessoas da obra · <b>3 h</b> · <span class="blo">não cabe</span>: até lá, o operador grava no banco o valor que a diretoria passar.</td></tr>
+<tr><td><b>O que o cliente vê do orçamento</b></td>
+<td class="ok">No banco, por obra, com três opções: só o preço de venda (padrão), preço de venda com remuneração separada, ou custo aberto. Só a diretoria muda. O cliente nunca vê preço de fornecedor das compras.</td>
+<td class="and">Não há tela para escolher a opção. O cliente também ainda não tem a tela do orçamento na conta real.</td>
+<td>Escolha na ficha da obra, só para a diretoria · <b>3 h</b> · <span class="blo">não cabe</span>, e não faz falta em 30/11: o padrão é o mais seguro.</td></tr>
+<tr><td><b>Quem vê a remuneração</b></td>
+<td class="and">Na prévia, só a diretoria vê "Como a empresa é remunerada". O cliente vê a remuneração em linha separada só se a obra estiver nessa opção.</td>
+<td class="blo">A remuneração ainda não é gravada no banco (é a parte P12). Por isso ainda não existe regra no banco de quem a vê.</td>
+<td>Na própria P12: só diretoria e gestor da obra leem; engenheiro, campo e cliente não leem · <b>2 h</b> dentro da P12 · <span class="ok">cabe</span>, se for decidido agora.</td></tr>
+</table>
+<p><small>Resposta direta: o <b>gestor não configura</b> o que engenheiros e o campo veem. Ele só escolhe quem entra nas obras dele, e com qual perfil (engenheiro, campo ou cliente). Todo o resto é da diretoria, e hoje só pelo banco. Para 30/11, recomendo fazer só a regra da remuneração (dentro da P12) e, se sobrar folga, a lista de pessoas por obra. Nada disso atrasa P9–P16.</small></p>
+
+<h2>De onde vem cada informação</h2>
+<p><small>Do código: menu por perfil e módulo (EXC-144, <code>menuDaObra</code>, <code>lerModulosDaObra</code> e <code>modulos_habilitados</code>); módulos por empresa e por perfil (EXC-87); regras do banco para obras, diário, orçamento, montagem e documentos; convites (EXC-131); compras com alçada (EXC-117); e o que o cliente vê de valores (EXC-48).</small></p>
+</body></html>

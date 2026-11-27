@@ -1,0 +1,1 @@
+import{t as e}from"./react-B2YxQ349.js";var t=e(),n=(0,t.createContext)(void 0);function r(){return(0,t.useContext)(n)}var i={diretoria:`1-diretoria`,gestor:`2-gestor`,engenheiro:`3-engenheiro`,campo:`4-campo`,cliente_admin:`5-cliente`,cliente:`5-cliente`};export{n,r,i as t};

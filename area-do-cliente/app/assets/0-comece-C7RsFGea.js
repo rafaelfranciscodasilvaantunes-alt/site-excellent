@@ -23,11 +23,13 @@ No alto da tela, a faixa mostra se o que você fez já foi enviado:
 
 No alto da tela, toque em **Ajuda** para abrir este manual na parte do seu perfil. A ajuda funciona mesmo sem internet.
 
+![A Ajuda aberta na parte do gestor](imagens/comece-ajuda.webp)
+
 ## Só na demonstração
 
 No ambiente de demonstração não há e-mail nem senha:
 
-- **Entrar como:** escolha um perfil (Diretoria, Gestor, Engenheiro, Campo ou um dos clientes) e você já entra.
+- **Entrar como:** escolha um perfil (Diretoria, Gestor, Engenheira, Campo ou um dos clientes) e você já entra.
 - **Trocar perfil:** no alto da tela, no lugar do "Sair". Volta para a escolha de perfil e mantém o que foi feito.
 - **Restaurar demonstração:** na tela de escolha de perfil. Apaga tudo o que foi feito e volta a obra-exemplo ao começo. O sistema pede confirmação antes.
 

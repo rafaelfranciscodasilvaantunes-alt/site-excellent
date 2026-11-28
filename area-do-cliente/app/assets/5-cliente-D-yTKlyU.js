@@ -12,6 +12,8 @@ Você vê só as suas obras e só o que a construtora liberou para você. Confor
 
 Você nunca vê notas internas da equipe, margem da construtora nem dados de outras obras.
 
+![A obra vista pelo cliente: só o que foi liberado](imagens/cliente-obra.webp)
+
 ## O seu dia a dia, passo a passo
 
 ### Acompanhar a obra

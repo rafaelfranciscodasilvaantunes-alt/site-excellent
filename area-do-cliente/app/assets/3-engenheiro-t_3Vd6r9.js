@@ -21,6 +21,8 @@ O engenheiro vê as obras em que trabalha. Ao abrir uma obra, encontra:
 
 Notas marcadas como **Nota interna** nunca aparecem para o cliente.
 
+![O diário do dia: conferir e corrigir os apontamentos](imagens/engenheiro-diario.webp)
+
 ### Lançar uma nota fiscal por foto
 
 1. Abra a obra e toque em **Entrada de material**.
@@ -39,6 +41,8 @@ Sem internet, a foto fica guardada no aparelho e a leitura acontece quando a int
 4. Para voltar, escolha **Visão da equipe**.
 
 Se faltar algo para o cliente, avise a diretoria. Só ela muda o que o cliente vê.
+
+![Ver como o cliente](imagens/gestor-ver-como-cliente.webp)
 
 ## Dúvidas comuns
 

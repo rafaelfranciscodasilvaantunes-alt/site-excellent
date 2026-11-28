@@ -22,6 +22,8 @@ O campo vê as obras em que trabalha e o que precisa para registrar o dia:
 7. Toque em **Salvar apontamento**.
 8. No fim do dia, confira o resumo e toque em **Enviar para revisão**.
 
+![O diário de hoje no celular](imagens/campo-diario.webp)
+
 ### Pedir material ou serviço
 
 1. Abra **Compras** e toque em **Pedir material ou serviço**.

@@ -14,6 +14,8 @@ A diretoria vê todas as obras da construtora. Na tela **Todas as obras** aparec
 - **Documentos das equipes:** documentos e vencimentos.
 - **Quem acompanha esta obra** e **Modelos do que o cliente vê:** o que cada cliente pode ver.
 
+![A obra aberta pela diretoria](imagens/diretoria-obra.webp)
+
 ## O seu dia a dia, passo a passo
 
 ### Criar uma obra e escolher a remuneração
@@ -53,6 +55,8 @@ Quem pediu não aprova o próprio pedido. Quando há só uma cotação ou o valo
 
 Use **Ver como o e-mail chega** para conferir o resultado antes de agendar.
 
+![Monte o seu relatório](imagens/diretoria-relatorios.webp)
+
 ### Como escolher o que cada cliente vê
 
 O cliente começa sem ver nada. Só a diretoria libera o que ele vê, e cada mudança fica registrada.
@@ -66,6 +70,8 @@ O cliente começa sem ver nada. Só a diretoria libera o que ele vê, e cada mud
 
 Cada modelo mostra quantos clientes e obras o usam. Só dá para excluir um modelo que não está em uso.
 
+![Modelos do que o cliente vê](imagens/diretoria-modelos.webp)
+
 **Dar acesso a um cliente.**
 
 1. Abra a obra e toque em **Quem acompanha esta obra**.
@@ -75,6 +81,8 @@ Cada modelo mostra quantos clientes e obras o usam. Só dá para excluir um mode
 
 Para tirar o acesso, abra o cartão do cliente e toque em **Tirar acesso**. O sistema pede confirmação.
 
+![Dar acesso a um cliente](imagens/diretoria-dar-acesso.webp)
+
 **Ajustar só nesta obra.** Às vezes um cliente precisa ver um pouco mais, ou menos, só numa obra.
 
 1. Em **Quem acompanha esta obra**, toque em **Ver e ajustar** no cartão do cliente.
@@ -83,7 +91,11 @@ Para tirar o acesso, abra o cartão do cliente e toque em **Tirar acesso**. O si
 
 O ajuste vale só para esse cliente nessa obra. O modelo e as outras obras continuam iguais. O quadro **"O que ele vê hoje"** resume o resultado.
 
+![Ver e ajustar: o que vem do modelo e o que foi ajustado nesta obra](imagens/diretoria-ajustar.webp)
+
 **O histórico.** No fim da tela **Quem acompanha esta obra**, o **Histórico** mostra quem mudou o quê e quando: acesso dado ou tirado, troca de modelo e cada ajuste. Nada é apagado dessa lista.
+
+![O histórico de quem mudou o quê](imagens/diretoria-historico.webp)
 
 ## Dúvidas comuns
 

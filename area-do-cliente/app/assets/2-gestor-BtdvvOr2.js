@@ -25,6 +25,8 @@ A tela **Material recebido** mostra quanto entrou em cada etapa. Se a nota for d
 
 **Sem internet:** a foto fica guardada no aparelho e a leitura acontece quando a internet voltar. A lista **Neste aparelho** mostra o que ainda falta enviar. Reenviar nunca duplica a nota.
 
+![Entrada de material: fotografar, ler o código ou digitar](imagens/gestor-nota.webp)
+
 ### Cotar e comprar
 
 1. Em **Compras**, abra o pedido feito pelo campo.
@@ -41,6 +43,8 @@ A tela **Material recebido** mostra quanto entrou em cada etapa. Se a nota for d
 4. Para voltar, escolha **Visão da equipe**.
 
 Use isso antes de uma reunião com o cliente ou quando ele disser que algo não aparece. Para mudar o que o cliente vê, fale com a diretoria. Em **Quem acompanha esta obra** você consulta, mas só a diretoria muda.
+
+![Ver como o cliente](imagens/gestor-ver-como-cliente.webp)
 
 ## Dúvidas comuns
 
